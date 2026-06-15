@@ -128,8 +128,22 @@
   .tk-chip.on{background:var(--accent);border-color:var(--accent);color:#10161c;font-weight:600}
   .tk-rank{font-family:var(--mono);font-size:10px;opacity:.85}
   .mini-add{background:none;border:none;color:var(--accent);cursor:pointer;font-family:var(--mono);font-size:11.5px;padding:0;text-decoration:underline}
+  /* moments + closest finish */
+  .moment-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .moment-list li{display:flex;flex-direction:column;gap:2px;border-left:2px solid var(--accent);padding-left:10px}
+  .moment-date{font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint)}
+  .moment-text{font-size:13.5px;color:var(--ink);line-height:1.4}
+  .close-stat{display:flex;flex-direction:column;gap:4px}
+  .close-num{font-family:var(--sans);font-weight:700;font-size:34px;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+  .close-meta{font-size:12.5px;color:var(--ink-dim)}
   /* keyword admin list */
   .kw-list{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:4px}
+  .kw-collapse{margin-bottom:4px}
+  .kw-collapse>summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--accent);padding:6px 0;list-style:none;user-select:none}
+  .kw-collapse>summary::-webkit-details-marker{display:none}
+  .kw-collapse>summary::before{content:"▸ ";color:var(--ink-faint)}
+  .kw-collapse[open]>summary::before{content:"▾ "}
+  .kw-scroll{max-height:340px;overflow-y:auto;margin-top:6px}
   .kw-row{display:grid;grid-template-columns:minmax(90px,1fr) 2fr auto;gap:10px;align-items:center;background:var(--panel);padding:8px 12px}
   .kw-word{font-weight:600;color:var(--chalk);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .kw-tags{display:flex;flex-wrap:wrap;gap:3px}
@@ -251,8 +265,10 @@
   .eng-pick{white-space:nowrap}
   .warn-text{color:var(--gold)}
   .eng-why{margin-top:14px;border:1px solid var(--accent);background:rgba(122,162,196,.07);padding:12px 14px}
-  .eng-why-h{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+  .eng-why-h{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:7px}
   .eng-why p{margin:0;font-size:13.5px;color:var(--ink);line-height:1.5}
+  .eng-why-list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+  .eng-why-list li{font-size:13.5px;color:var(--ink);line-height:1.5}
 
   .mark-row{padding:12px 16px;border-bottom:1px solid rgba(42,51,66,.5)}
   .mark-row:last-child{border-bottom:none}
@@ -783,7 +799,7 @@ function numOrNull(v){return v===""||v==null||isNaN(v)?null:+v;}
    2,3,4,7,8,9,10. Picture, Sound, Creative and the row-11 bonus can't be
    doubled. Sound stores a per-night mode: "split" (½ artist + ½ title) or
    "flat" (1 point each, e.g. SFX / TV themes). */
-const DRAFT_VERSION = 7;   // bump invalidates stale localStorage drafts
+const DRAFT_VERSION = 8;   // bump invalidates stale localStorage drafts
 const STANDARD_ROUNDS = [
   { title:"Picture",           type:"Picture Round",     avail:9,  doublable:false },
   { title:"In The News",       type:"General Knowledge", avail:5,  doublable:true  },
@@ -808,7 +824,8 @@ function freshDraft(){
   return { version:DRAFT_VERSION, step:1,
            date:todayISO(), quizmaster:"", adminName:"", numTeams:null, jackpot:null,
            startTime:"", present:{}, rounds:STANDARD_ROUNDS.map(templateRound),
-           winScore:null, placement:null, winnerTeam:"", jackpotWon:false, ris:null };
+           winScore:null, placement:null, winnerTeam:"", jackpotWon:false, ris:null,
+           nearestGap:null, moment:"" };
 }
 /* Load a saved draft only if it matches the current template version.
    A genuinely in-progress draft from this version survives a reload; a stale
@@ -920,45 +937,75 @@ const DOUBLE_ROWS = [1,2,3,6,7,8,9]; // 0-based indices of doublable rounds (R2,
    strength or a combo, and the margin over the next-best option. */
 function doubleReasoning(best, ranked, present, skill){
   if(!best || !best.weighted || !best.weighted.length || !present.length) return null;
-  const bits=[];
-  // primary tag + who carries it
+  const est=(n,tag)=> (skill[n]&&skill[n][tag])?skill[n][tag].est:0.5;
+  const pct=e=>Math.round(e*100);
+  const lines=[];
+
+  // --- primary tag: full contributor breakdown ---
   const primary = best.weighted[0];
-  const contributors = present.map(n=>({n, e:(skill[n]&&skill[n][primary.tag])?skill[n][primary.tag].est:0.5}))
-                              .filter(x=>x.e>0.55).sort((a,b)=>b.e-a.e);
-  if(contributors.length){
-    if(contributors.length===1){
-      bits.push(`<b>${esc(contributors[0].n)}</b> is your strongest on <b>${esc(primary.tag)}</b> (${Math.round(contributors[0].e*100)}%) and they're in tonight`);
-    } else {
-      const top=contributors.slice(0,2).map(c=>esc(c.n)).join(" + ");
-      bits.push(`<b>${top}</b> give you real strength on <b>${esc(primary.tag)}</b> tonight`);
-    }
+  const pcontrib = present.map(n=>({n, e:est(n,primary.tag)})).sort((a,b)=>b.e-a.e);
+  const pStrong = pcontrib.filter(x=>x.e>0.6);
+  const pMid = pcontrib.filter(x=>x.e>0.5 && x.e<=0.6);
+  const namePct = x=>`<b>${esc(x.n)}</b> ${pct(x.e)}%`;
+
+  if(pStrong.length>=2){
+    lines.push(`<b>${esc(primary.tag)}</b> is well covered tonight — ${pStrong.slice(0,3).map(namePct).join(", ")}${pStrong.length>3?` and ${pStrong.length-3} more`:""} all sit above 60%, so it's not resting on one person.`);
+  } else if(pStrong.length===1){
+    const solo=pStrong[0];
+    const backup=pMid[0];
+    lines.push(`<b>${esc(solo.n)}</b> is your <b>${esc(primary.tag)}</b> specialist at ${pct(solo.e)}%${backup?`, with <b>${esc(backup.n)}</b> (${pct(backup.e)}%) as backup`:` — though they're carrying it fairly solo tonight`}.`);
+  } else if(pMid.length){
+    const midNames = pMid.slice(0,2).map(namePct).join(" and ");
+    lines.push(`No standout <b>${esc(primary.tag)}</b> specialist in, but ${midNames} ${pMid.length===1?"is":"are"} solid enough to make it your best bank.`);
   } else {
-    bits.push(`It's your best-projected round of the doublable set, even without a standout specialist present`);
+    lines.push(`It's the best of the doublable set even without strong <b>${esc(primary.tag)}</b> cover — more about the alternatives being weaker than this being a banker.`);
   }
-  // secondary tag nudge
+
+  // --- secondary tag: who covers it, and whether it's a different person ---
   if(best.weighted[1]){
     const sec=best.weighted[1];
-    const secBest=present.map(n=>({n,e:(skill[n]&&skill[n][sec.tag])?skill[n][sec.tag].est:0.5})).sort((a,b)=>b.e-a.e)[0];
-    if(secBest && secBest.e>0.6) bits.push(`with a ${esc(sec.tag)} angle ${esc(secBest.n)} can cover`);
+    const sBest=present.map(n=>({n,e:est(n,sec.tag)})).sort((a,b)=>b.e-a.e)[0];
+    if(sBest && sBest.e>0.58){
+      const samePerson = pStrong[0] && pStrong[0].n===sBest.n;
+      if(samePerson && pStrong.length===1){
+        lines.push(`It also leans on <b>${esc(sec.tag)}</b>, and that's <b>${esc(sBest.n)}</b> again (${pct(sBest.e)}%) — strong, but a lot rides on them.`);
+      } else {
+        lines.push(`The <b>${esc(sec.tag)}</b> angle is covered by <b>${esc(sBest.n)}</b> (${pct(sBest.e)}%)${samePerson?"":" — a different head, so the round spreads across the table"}.`);
+      }
+    }
   }
-  // margin over next best
+
+  // --- tertiary, if present and someone's notably strong ---
+  if(best.weighted[2]){
+    const ter=best.weighted[2];
+    const tBest=present.map(n=>({n,e:est(n,ter.tag)})).sort((a,b)=>b.e-a.e)[0];
+    if(tBest && tBest.e>0.65) lines.push(`Bonus: <b>${esc(tBest.n)}</b> brings ${pct(tBest.e)}% on the <b>${esc(ter.tag)}</b> element too.`);
+  }
+
+  // --- margin over next-best option ---
   const others=ranked.filter(x=>x.i!==best.i && x.proj!=null && x.tags.length);
   if(others.length){
     const next=others[0];
     const margin=Math.round((best.proj-next.proj)*100);
-    if(margin>=8) bits.push(`it's clearly ahead of the next option (${esc(next.r.title||("round "+(next.i+1)))}) by ${margin} points of strength`);
-    else if(margin>=3) bits.push(`it edges out ${esc(next.r.title||("round "+(next.i+1)))} by ${margin} points`);
-    else bits.push(`though it's close with ${esc(next.r.title||("round "+(next.i+1)))} — either is defensible`);
+    const nextName=esc(next.r.title||("round "+(next.i+1)));
+    if(margin>=8) lines.push(`Clearly ahead of the next option (${nextName}) by ${margin} points of projected strength.`);
+    else if(margin>=3) lines.push(`Edges out ${nextName} by ${margin} points — a real but not huge gap.`);
+    else lines.push(`It's close with ${nextName} (within ${margin} point${margin===1?"":"s"}) — either is defensible, so trust the room.`);
   }
-  // who's missing that would change it
-  const absentStars = state.players.filter(p=>!draft.present[p.name])
-    .map(p=>({n:p.name, e:(skill[p.name]&&skill[p.name][primary.tag])?skill[p.name][primary.tag].est:0}))
+
+  // --- absent stars across the round's tags ---
+  const roundTags=best.weighted.map(w=>w.tag);
+  const absent = state.players.filter(p=>!draft.present[p.name])
+    .map(p=>{ let bestTag=null,bestE=0; roundTags.forEach(tag=>{const e=est(p.name,tag); if(e>bestE){bestE=e;bestTag=tag;}}); return {n:p.name, tag:bestTag, e:bestE}; })
     .filter(x=>x.e>0.7).sort((a,b)=>b.e-a.e);
   let warn="";
-  if(absentStars.length) warn = `<p class="hint" style="margin:6px 0 0">Note: ${esc(absentStars[0].n)} (your top ${esc(primary.tag)} player) isn't in tonight — the projection already accounts for that.</p>`;
+  if(absent.length){
+    const a=absent[0];
+    warn=`<p class="hint" style="margin:8px 0 0">Missing tonight: <b>${esc(a.n)}</b> (${pct(a.e)}% on ${esc(a.tag)})${absent.length>1?` and ${absent.length-1} other regular${absent.length>2?"s":""}`:""} — the projection already accounts for who's actually in.</p>`;
+  }
 
   return `<div class="eng-why"><div class="eng-why-h">Why ${esc(best.r.title||("round "+(best.i+1)))}?</div>
-    <p>${bits.join("; ")}.</p>${warn}</div>`;
+    <ul class="eng-why-list">${lines.map(l=>`<li>${l}</li>`).join("")}</ul>${warn}</div>`;
 }
 
 function renderEngine(present, skill){
@@ -1263,6 +1310,16 @@ function renderRundown(present, skill){
         </div>
         <label class="rd-jackpot"><input type="checkbox" id="rd_jackWon" ${draft.jackpotWon?"checked":""}> Jackpot won by the winning team${draft.jackpot!=null?` (£${draft.jackpot})`:""}</label>
         <p class="hint">If the jackpot wasn't won it rolls over to next week — leave this unticked.${draft.ris!=null?` · RIS logged: <b>${draft.ris}/10</b>.`:` · No RIS logged (add it in Night details).`}</p>
+
+        <div class="field-row" style="margin-top:10px">
+          <div class="field"><label>Nearest rival gap (± points)</label><input type="number" step="0.5" id="rd_gap" value="${draft.nearestGap??""}" placeholder="e.g. 1.5">
+            <p class="hint" style="margin-top:4px">How close the nearest team was — <b>+</b> if you held them off, <b>−</b> if they pipped you. Can't reconstruct this later!</p></div>
+        </div>
+        <div class="field"><label>Moment of the night ✨</label>
+          <input id="rd_moment" value="${esc(draft.moment||"")}" placeholder="the heroic guess, the catastrophic overthink, the row…">
+          <p class="hint" style="margin-top:4px">One line of glory or shame for the end-of-year reel. Optional, but you'll thank yourself in December.</p>
+        </div>
+
         <div class="inline-actions" style="margin-top:16px">
           <button class="btn primary" id="rd_save">Save week → stats</button>
           <button class="btn ghost" id="nw_discard">Discard</button>
@@ -1278,6 +1335,8 @@ function renderRundown(present, skill){
   $("#rd_winner").oninput=e=>{ draft.winnerTeam=e.target.value; saveLocalDraft(); };
   $("#rd_weWon").onclick=()=>{ draft.winnerTeam=(state.teamName||"Us"); draft.placement=1; saveLocalDraft(); renderNewWeek(); };
   $("#rd_jackWon").onchange=e=>{ draft.jackpotWon=e.target.checked; saveLocalDraft(); };
+  $("#rd_gap").oninput=e=>{ draft.nearestGap=numOrNull(e.target.value); saveLocalDraft(); };
+  $("#rd_moment").oninput=e=>{ draft.moment=e.target.value; saveLocalDraft(); };
   $("#rd_save").onclick=saveWeekStepped;
 }
 
@@ -1290,6 +1349,7 @@ function saveWeekStepped(){
     placement:draft.placement, numTeams:draft.numTeams, score, winScore:draft.winScore,
     jackpot:draft.jackpot, teamSize:present.length||null, startTime:draft.startTime||null,
     winnerTeam:draft.winnerTeam||null, jackpotWon:!!draft.jackpotWon, ris:draft.ris??null,
+    nearestGap:draft.nearestGap??null, moment:draft.moment||null,
     attendance:Object.fromEntries(present.map(n=>[n,1])) };
   season().weeks.push(week);
   season().weeks.sort((a,b)=>(a.date||"")<(b.date||"")?-1:1);
@@ -1517,13 +1577,31 @@ function dashboardTrackers(){
     charmHtml='<p class="hint" style="margin:0">Not enough weeks yet to compare lineups.</p>';
   }
 
+  // moments of the night (latest first) + closest finish of the season
+  const moments = weeksOf().filter(w=>w.moment).slice().sort((a,b)=>(a.date||"")<(b.date||"")?1:-1);
+  const gapWeeks = weeksOf().filter(w=>w.nearestGap!=null);
+  const closest = gapWeeks.length? gapWeeks.slice().sort((a,b)=>Math.abs(a.nearestGap)-Math.abs(b.nearestGap))[0] : null;
+  const momHtml = moments.length
+    ? '<ul class="moment-list">'+moments.slice(0,6).map(w=>`<li><span class="moment-date">${fmtDate(w.date)}</span><span class="moment-text">${esc(w.moment)}</span></li>`).join("")+'</ul>'
+    : '<p class="hint" style="margin:0">No moments logged yet — add one on the Results step and they\u2019ll collect here for the year-end reel.</p>';
+  const closeHtml = closest
+    ? `<div class="close-stat"><span class="close-num">${closest.nearestGap>0?"+":""}${closest.nearestGap}</span><span class="close-meta">${closest.nearestGap>0?"held them off by":"pipped by"} ${Math.abs(closest.nearestGap)} on ${fmtDate(closest.date)}</span></div>`
+    : '<p class="hint" style="margin:0">Log the nearest-rival gap on Results to track your photo finishes.</p>';
+  const momentsRow = '<div class="two-col" style="margin-top:18px">'
+    + '<div class="panel"><div class="panel-head"><h3>Moments of the night \u2728</h3><span class="mini-note">'+(moments.length?moments.length+" LOGGED":"")+'</span></div>'
+    +   '<div class="panel-body" style="padding:14px 16px">'+momHtml+'</div></div>'
+    + '<div class="panel"><div class="panel-head"><h3>Closest finish</h3><span class="mini-note">'+state.activeSeason+'</span></div>'
+    +   '<div class="panel-body" style="padding:14px 16px">'+closeHtml+'</div></div>'
+    + '</div>';
+
   return cards
     + '<div class="two-col" style="margin-top:18px">'
     +   '<div class="panel"><div class="panel-head"><h3>Rusty Intonation Score</h3><span class="mini-note">BY HOST</span></div>'
     +     '<div class="panel-body" style="padding:14px 16px">'+risHtml+'</div></div>'
     +   '<div class="panel"><div class="panel-head"><h3>Lucky charm</h3><span class="mini-note">RESULT BY WHO\u2019S THERE</span></div>'
     +     '<div class="panel-body" style="padding:14px 16px">'+charmHtml+'</div></div>'
-    + '</div>';
+    + '</div>'
+    + momentsRow;
 }
 
 /* ================= DASHBOARD ================= */
@@ -2232,12 +2310,13 @@ create policy "anon update" on quiz_state for update using (true);</textarea>
     </div></div>
     <div class="panel"><div class="panel-head"><h3>Keywords</h3><span class="mini-note">${state.keywords.length} terms</span></div><div class="panel-body" style="padding:16px">
       <p class="section-note">Keywords power the Double Engine. Each maps a word in a round title to ranked subject tags (primary drives the projection; secondary/tertiary nudge it). Add one for a round that isn't being detected.</p>
-      ${state.keywords.length?`<div class="kw-list">${state.keywords.slice().sort((a,b)=>String(a.k||"").localeCompare(String(b.k||""))).map(kw=>{
+      ${state.keywords.length?`<details class="kw-collapse"><summary>View all ${state.keywords.length} keywords</summary>
+        <div class="kw-scroll"><div class="kw-list">${state.keywords.slice().sort((a,b)=>String(a.k||"").localeCompare(String(b.k||""))).map(kw=>{
         const gi = state.keywords.indexOf(kw);
         return `<div class="kw-row"><span class="kw-word">${esc(kw.k||"—")}</span>
           <span class="kw-tags">${(kw.t||[]).map((t,r)=>`<span class="chip${r===0?" chip-pri":r===1?" chip-sec":""}">${esc(t)}</span>`).join("")||'<span class="hint">no tags</span>'}</span>
           <button class="btn sm ghost kw-del" data-kwdel="${gi}" title="Remove">✕</button></div>`;
-      }).join("")}</div>`:`<p class="hint">No keywords yet.</p>`}
+      }).join("")}</div></div></details>`:`<p class="hint">No keywords yet.</p>`}
       <button class="btn gold sm" id="addKw" style="margin-top:10px">+ Add keyword</button>
     </div></div>
     <div class="panel danger"><div class="panel-head"><h3>Clear data</h3><span class="mini-note">${state.activeSeason}</span></div><div class="panel-body" style="padding:16px">
@@ -2299,6 +2378,8 @@ function openWeekModal(idx){
       <label class="rd-jackpot"><input type="checkbox" id="w_jackwon" ${w.jackpotWon?"checked":""}> Jackpot was won this week</label>
       <div class="field-row" style="margin-top:10px"><div class="field"><label>RIS — 2nd-place prize intro /10</label><input type="number" min="0" max="10" step="0.5" id="w_ris" value="${w.ris??""}"></div>
       <div class="field"><label>Quiz start time</label><input type="time" id="w_start" value="${esc(w.startTime||"")}"></div></div>
+      <div class="field-row" style="margin-top:10px"><div class="field"><label>Nearest rival gap (±)</label><input type="number" step="0.5" id="w_gap" value="${w.nearestGap??""}"></div>
+      <div class="field"><label>Moment of the night</label><input id="w_moment" value="${esc(w.moment||"")}"></div></div>
       ${state.rivals.length?`<div class="field" style="margin-top:6px"><label>Rivals this week — their placement &amp; score</label>
         <div class="rival-entry">${state.rivals.map((rv,ri)=>{
           const cur=(w.rivals&&w.rivals[rv.name])||{};
@@ -2320,6 +2401,7 @@ function openWeekModal(idx){
       score:numOrNull($("#w_score").value),winScore:numOrNull($("#w_win").value),jackpot:numOrNull($("#w_jack").value),
       winnerTeam:$("#w_winner").value||null,jackpotWon:$("#w_jackwon").checked,ris:numOrNull($("#w_ris").value),
       startTime:$("#w_start").value||null,
+      nearestGap:numOrNull($("#w_gap").value),moment:$("#w_moment").value||null,
       rivals:Object.keys(rivals).length?rivals:undefined});
     save();closeModal();render();toast("Week updated");};
   $("#w_del").onclick=()=>{if(confirm("Delete this week and its round data?")){
@@ -2345,9 +2427,9 @@ function exportXlsx(){
     const XLSX=window.XLSX;const wb=XLSX.utils.book_new();
     const sk=state.activeSeason;
     // Weekly Log
-    const wl=[["Date","Start","Quizmaster","Placement","No. Teams","Score","Win Score","S2W","Jackpot","Jackpot Won","Winning Team","RIS","Team Size",...playerNames()]];
+    const wl=[["Date","Start","Quizmaster","Placement","No. Teams","Score","Win Score","S2W","Jackpot","Jackpot Won","Winning Team","RIS","Nearest Gap","Moment","Team Size",...playerNames()]];
     weeksOf().forEach(w=>{const s2w=(w.score!=null&&w.winScore)?w.score/w.winScore:"";
-      wl.push([w.date||"",w.startTime||"",w.quizmaster||"",w.placement??"",w.numTeams??"",w.score??"",w.winScore??"",s2w,w.jackpot??"",w.jackpotWon?"Yes":"",w.winnerTeam||"",w.ris??"",w.teamSize??"",
+      wl.push([w.date||"",w.startTime||"",w.quizmaster||"",w.placement??"",w.numTeams??"",w.score??"",w.winScore??"",s2w,w.jackpot??"",w.jackpotWon?"Yes":"",w.winnerTeam||"",w.ris??"",w.nearestGap??"",w.moment||"",w.teamSize??"",
         ...playerNames().map(n=>(w.attendance&&+w.attendance[n]===1)?1:"")]);});
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(wl),"Weekly Log");
     // Round Data
