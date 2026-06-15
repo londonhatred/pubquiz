@@ -118,6 +118,22 @@
   .chip.win{color:var(--good);border-color:rgba(95,200,143,.35)}
   .chip.pod{color:var(--gold);border-color:rgba(232,176,75,.35)}
   .chip.double{color:var(--double);border-color:rgba(202,168,74,.5);background:rgba(202,168,74,.08)}
+  .chip.chip-pri{color:var(--accent);border-color:var(--accent);font-weight:600}
+  .chip.chip-sec{color:var(--ink);border-color:var(--ink-faint)}
+  /* teach-the-engine ranked tag picker */
+  .tk-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .tk-chip{font-family:var(--sans);font-size:13px;cursor:pointer;background:var(--panel2);
+    border:1px solid var(--line);color:var(--ink-dim);padding:6px 10px;border-radius:0}
+  .tk-chip:hover{border-color:var(--ink-faint);color:var(--ink)}
+  .tk-chip.on{background:var(--accent);border-color:var(--accent);color:#10161c;font-weight:600}
+  .tk-rank{font-family:var(--mono);font-size:10px;opacity:.85}
+  .mini-add{background:none;border:none;color:var(--accent);cursor:pointer;font-family:var(--mono);font-size:11.5px;padding:0;text-decoration:underline}
+  /* keyword admin list */
+  .kw-list{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:4px}
+  .kw-row{display:grid;grid-template-columns:minmax(90px,1fr) 2fr auto;gap:10px;align-items:center;background:var(--panel);padding:8px 12px}
+  .kw-word{font-weight:600;color:var(--chalk);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .kw-tags{display:flex;flex-wrap:wrap;gap:3px}
+  .kw-del{color:var(--bad)}
   .form-guide{font-family:var(--mono);font-size:13px;letter-spacing:2px;font-weight:800}
   .fg-W{color:var(--gold)} .fg-P{color:var(--good)} .fg-L{color:var(--ink-faint)}
 
@@ -234,6 +250,9 @@
     border:1px solid rgba(232,176,75,.4);border-radius:5px;padding:2px 7px}
   .eng-pick{white-space:nowrap}
   .warn-text{color:var(--gold)}
+  .eng-why{margin-top:14px;border:1px solid var(--accent);background:rgba(122,162,196,.07);padding:12px 14px}
+  .eng-why-h{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:5px}
+  .eng-why p{margin:0;font-size:13.5px;color:var(--ink);line-height:1.5}
 
   .mark-row{padding:12px 16px;border-bottom:1px solid rgba(42,51,66,.5)}
   .mark-row:last-child{border-bottom:none}
@@ -254,6 +273,21 @@
     padding:8px 10px;border-radius:7px;font-size:15px;text-align:center;font-family:inherit}
   .mk-theme{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-dim)}
   .mk-theme input[type=checkbox]{width:auto}
+  /* tap-to-credit */
+  .mk-credit{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  .mk-credit-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+  .mk-credit-label{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-faint)}
+  .mk-detail-toggle{background:none;border:none;color:var(--accent);font-size:11.5px;cursor:pointer;font-family:var(--mono);padding:0}
+  .mk-chips{display:flex;flex-wrap:wrap;gap:6px}
+  .credit-chip{font-family:var(--sans);font-size:12.5px;cursor:pointer;background:var(--panel2);
+    border:1px solid var(--line);color:var(--ink-dim);padding:5px 10px;border-radius:0}
+  .credit-chip:hover{border-color:var(--ink-faint);color:var(--ink)}
+  .credit-chip.on{background:var(--accent);border-color:var(--accent);color:#10161c;font-weight:600}
+  .credit-chip .cc-n{font-family:var(--mono);font-size:10px;opacity:.85;margin-left:2px}
+  .mk-credit-exact{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+  .cx-row{display:grid;grid-template-columns:1fr 70px 70px;gap:6px;align-items:center;font-size:13px}
+  .cx-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .cx-row input{background:var(--panel2);border:1px solid var(--line);color:var(--ink);padding:5px 7px;font-size:12px;font-family:inherit;text-align:center}
   .mark-total{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
     background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:18px}
   .mt-label{font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-faint);display:block}
@@ -400,6 +434,7 @@
     <button class="tab active" data-view="dashboard">Dashboard</button>
     <button class="tab" data-view="players">Players</button>
     <button class="tab" data-view="strengths">Strengths</button>
+    <button class="tab" data-view="insights">Insights</button>
     <button class="tab" data-view="double">Double Engine</button>
     <button class="tab" data-view="rivals">Rivals</button>
     <button class="tab" data-view="log">Weekly Log</button>
@@ -414,6 +449,7 @@
   <section class="view active" id="view-dashboard"></section>
   <section class="view" id="view-players"></section>
   <section class="view" id="view-strengths"></section>
+  <section class="view" id="view-insights"></section>
   <section class="view" id="view-double"></section>
   <section class="view" id="view-rivals"></section>
   <section class="view" id="view-log"></section>
@@ -489,6 +525,11 @@ function withDefaults(s){
   if(!Array.isArray(s.bingo.tropes)) s.bingo.tropes = DEFAULT_TROPES.slice();
   if(!s.bingo.round) s.bingo.round = 1;
   if(!s.bingo.players || typeof s.bingo.players!=="object") s.bingo.players = {};
+  // backfill: weeks (esp. 2025 seed) with a jackpot but no jackpotWon flag read
+  // as "rolled over" rather than blank. Editable per-week in the Weekly Log.
+  Object.values(s.seasons||{}).forEach(se=>{
+    (se.weeks||[]).forEach(w=>{ if(w.jackpot!=null && w.jackpotWon===undefined) w.jackpotWon=false; });
+  });
   return s;
 }
 function migrate(s){
@@ -632,48 +673,88 @@ function teamStats(sk){
     avgS2W:s2w.length?s2w.reduce((a,x)=>a+x,0)/s2w.length:null };
 }
 
-function strengthByTag(sk){
+/* combined rounds/weeks: current season + 2025 baseline, de-duped by being
+   from different seasons. Used by Strengths/Insights when the year toggle is
+   on "combined". 2025 is only added if it isn't already the active season. */
+function combinedRounds(){
+  const cur=roundsOf();
+  if(state.activeSeason==='2025' || !state.seasons['2025']) return cur;
+  return cur.concat(roundsOf('2025'));
+}
+function combinedWeeks(){
+  const cur=weeksOf();
+  if(state.activeSeason==='2025' || !state.seasons['2025']) return cur;
+  return cur.concat(weeksOf('2025'));
+}
+/* are we showing combined (2025+current) or current-only? default combined */
+function yearMode(){ return sortState._yearMode || "combined"; }
+function activeRounds(){ return yearMode()==="combined" ? combinedRounds() : roundsOf(); }
+function activeWeeks(){ return yearMode()==="combined" ? combinedWeeks() : weeksOf(); }
+/* tracker data source: explicit season wins; otherwise follow the year toggle */
+function srcRounds(sk){ return sk ? roundsOf(sk) : activeRounds(); }
+function srcWeeks(sk){ return sk ? weeksOf(sk) : activeWeeks(); }
+
+function strengthByTag(rs){
+  rs = rs || roundsOf();
   return state.tags.map(tag=>{
-    const rs = roundsOf(sk).filter(r=>r.tags&&r.tags.includes(tag)&&r.score!=null&&r.avail);
-    const got=rs.reduce((a,r)=>a+ +r.score,0), av=rs.reduce((a,r)=>a+ +r.avail,0);
-    return {name:tag, pct:av?got/av:null, n:rs.length};
+    const m = rs.filter(r=>r.tags&&r.tags.includes(tag)&&r.score!=null&&r.avail);
+    const got=m.reduce((a,r)=>a+ +r.score,0), av=m.reduce((a,r)=>a+ +r.avail,0);
+    return {name:tag, pct:av?got/av:null, n:m.length};
   });
 }
-function strengthByType(sk){
+function strengthByType(rs){
+  rs = rs || roundsOf();
   return state.roundTypes.map(t=>{
-    const rs = roundsOf(sk).filter(r=>r.type===t&&r.score!=null&&r.avail);
-    const got=rs.reduce((a,r)=>a+ +r.score,0), av=rs.reduce((a,r)=>a+ +r.avail,0);
-    return {name:t, pct:av?got/av:null, n:rs.length};
+    const m = rs.filter(r=>r.type===t&&r.score!=null&&r.avail);
+    const got=m.reduce((a,r)=>a+ +r.score,0), av=m.reduce((a,r)=>a+ +r.avail,0);
+    return {name:t, pct:av?got/av:null, n:m.length};
   });
 }
 
 /* ================= DOUBLE ENGINE (presence-aware) ================= */
+/* Tag rank weights: a keyword's tags are stored in priority order.
+   1st tag = primary, 2nd = secondary, 3rd = tertiary, etc. */
+const TAG_WEIGHTS = [1.0, 0.6, 0.3, 0.15];
+function tagWeight(rank){ return TAG_WEIGHTS[rank] != null ? TAG_WEIGHTS[rank] : 0.1; }
+
 function detectTags(title){
-  if(!title||!title.trim()) return {tags:[], matched:[]};
-  const t=title.toLowerCase(); const tags=new Set(); const matched=[];
+  if(!title||!title.trim()) return {tags:[], weighted:[], matched:[]};
+  const t=title.toLowerCase(); const matched=[];
+  const best = {};  // tag -> highest weight seen across all matching keywords
   for(const kw of state.keywords){
     if(kw.k==null||kw.k==="") continue;
     const k=String(kw.k).toLowerCase();
-    if(t.includes(k)){ kw.t.forEach(x=>tags.add(x)); matched.push(kw.k); }
+    if(t.includes(k)){
+      matched.push(kw.k);
+      (kw.t||[]).forEach((tag,rank)=>{
+        const w = tagWeight(rank);
+        if(best[tag]==null || w>best[tag]) best[tag]=w;
+      });
+    }
   }
-  return {tags:[...tags], matched};
+  const weighted = Object.entries(best).map(([tag,weight])=>({tag,weight}))
+                         .sort((a,b)=>b.weight-a.weight);
+  return { tags: weighted.map(x=>x.tag), weighted, matched };
 }
 function scoreRound(title, present, skill){
   const det = detectTags(title);
-  if(!det.tags.length) return {tags:[], score:0, matched:0, perTag:[]};
-  const perTag = det.tags.map(tag=>({tag, strength:teamTagStrength(tag, present, skill)}));
-  // round score = sum of present-adjusted strengths across detected tags
-  const score = perTag.reduce((a,x)=>a+x.strength,0);
+  if(!det.weighted.length) return {tags:[], score:0, matched:0, perTag:[]};
+  const perTag = det.weighted.map(({tag,weight})=>({tag, weight, strength:teamTagStrength(tag, present, skill)}));
+  // weighted average of present-adjusted strengths (primary tag dominates,
+  // secondary/tertiary nudge) — keeps score in 0..1
+  const wsum = perTag.reduce((a,x)=>a+x.weight,0) || 1;
+  const score = perTag.reduce((a,x)=>a+x.strength*x.weight,0) / wsum;
   return {tags:det.tags, score, matched:det.matched.length, perTag};
 }
 
 /* ================= RENDER ROUTER ================= */
-const VIEWS = ["newweek","dashboard","players","strengths","double","rivals","log","rounds","bingo","admin"];
+const VIEWS = ["newweek","dashboard","players","strengths","insights","double","rivals","log","rounds","bingo","admin"];
 function render(){
   renderNewWeek();
   renderDashboard();
   renderPlayers();
   renderStrengths();
+  renderInsights();
   renderDouble();
   renderRivals();
   renderLog();
@@ -702,7 +783,7 @@ function numOrNull(v){return v===""||v==null||isNaN(v)?null:+v;}
    2,3,4,7,8,9,10. Picture, Sound, Creative and the row-11 bonus can't be
    doubled. Sound stores a per-night mode: "split" (½ artist + ½ title) or
    "flat" (1 point each, e.g. SFX / TV themes). */
-const DRAFT_VERSION = 6;   // bump invalidates stale localStorage drafts
+const DRAFT_VERSION = 7;   // bump invalidates stale localStorage drafts
 const STANDARD_ROUNDS = [
   { title:"Picture",           type:"Picture Round",     avail:9,  doublable:false },
   { title:"In The News",       type:"General Knowledge", avail:5,  doublable:true  },
@@ -726,7 +807,7 @@ function templateRound(t){
 function freshDraft(){
   return { version:DRAFT_VERSION, step:1,
            date:todayISO(), quizmaster:"", adminName:"", numTeams:null, jackpot:null,
-           present:{}, rounds:STANDARD_ROUNDS.map(templateRound),
+           startTime:"", present:{}, rounds:STANDARD_ROUNDS.map(templateRound),
            winScore:null, placement:null, winnerTeam:"", jackpotWon:false, ris:null };
 }
 /* Load a saved draft only if it matches the current template version.
@@ -754,8 +835,9 @@ function stepTracker(cur){
   const steps = [
     {n:1, k:"Setup"},
     {n:2, k:"Engine"},
-    {n:3, k:"Marking"},
-    {n:4, k:"Rundown"},
+    {n:3, k:"Details"},
+    {n:4, k:"Marking"},
+    {n:5, k:"Results"},
   ];
   return `<ol class="step-track" aria-label="New week progress">
     ${steps.map(s=>{
@@ -784,17 +866,14 @@ function renderNewWeek(){
       <div class="panel"><div class="panel-head"><h3>Setup</h3>
         <span class="mini-note">${draft.rounds.length} rounds ready</span></div>
         <div class="panel-body" style="padding:16px">
+          <p class="hint" style="margin-top:0">You've got the sheet and the round names. Tick who's in, then lock the double with the host.</p>
           <div class="field-row">
             <div class="field"><label>Date</label><input type="date" id="nw_date" value="${draft.date}"></div>
             <div class="field"><label>Quizmaster</label><input id="nw_qm" placeholder="who's hosting tonight" value="${esc(draft.quizmaster)}"></div>
           </div>
           <div class="field-row">
             <div class="field"><label>Marking as</label><input id="nw_admin" placeholder="your name" value="${esc(draft.adminName||"")}"></div>
-            <div class="field"><label>Teams tonight</label><input type="number" id="nw_teams" min="1" value="${draft.numTeams??""}"></div>
-          </div>
-          <div class="field-row">
             <div class="field"><label>Jackpot tonight (£)</label><input type="number" id="nw_jack" min="0" value="${draft.jackpot??""}"></div>
-            <div class="field"></div>
           </div>
           <div class="field"><label>Who's here</label>
             <div class="att-grid">${playerNames().map(n=>`<label><input type="checkbox" data-pres="${esc(n)}" ${draft.present[n]?"checked":""}>${esc(n)}</label>`).join("")}</div>
@@ -804,10 +883,10 @@ function renderNewWeek(){
             <p class="hint">${present.length} in the room${present.length?": "+present.map(esc).join(", "):""}</p>
           </div>
           <div class="inline-actions" style="margin-top:14px">
-            <button class="btn primary" id="nw_start">Start the night →</button>
+            <button class="btn primary" id="nw_start">To the double engine →</button>
             <button class="btn ghost" id="nw_discard">Discard</button>
           </div>
-          <p class="hint">The standard ${draft.rounds.length} rounds are loaded and ready — you'll set the doubles next.</p>
+          <p class="hint">Teams, start time and the RIS come after the double's locked — you'll add them while the quiz introduces itself.</p>
         </div>
       </div>
     `;
@@ -815,9 +894,10 @@ function renderNewWeek(){
     return;
   }
 
-  /* ---- STEPS 2–4 ---- */
+  /* ---- STEPS 2–5 ---- */
   if(draft.step === 2) return renderEngine(present, skill);
-  if(draft.step === 3) return renderMarking(present, skill);
+  if(draft.step === 3) return renderNightDetails(present, skill);
+  if(draft.step === 4) return renderMarking(present, skill);
   return renderRundown(present, skill);
 }
 
@@ -834,12 +914,59 @@ function nwDiscard(){ if(confirm("Discard this week's entry?")){ draft=null; loc
 
 /* ================= STEP 2 · ENGINE (where to bank the double) ================= */
 const DOUBLE_ROWS = [1,2,3,6,7,8,9]; // 0-based indices of doublable rounds (R2,3,4,7,8,9,10)
+
+/* Plain-English reasoning for why the engine recommends this round. Looks at
+   the best round's tags, which present players drive them, whether it's a solo
+   strength or a combo, and the margin over the next-best option. */
+function doubleReasoning(best, ranked, present, skill){
+  if(!best || !best.weighted || !best.weighted.length || !present.length) return null;
+  const bits=[];
+  // primary tag + who carries it
+  const primary = best.weighted[0];
+  const contributors = present.map(n=>({n, e:(skill[n]&&skill[n][primary.tag])?skill[n][primary.tag].est:0.5}))
+                              .filter(x=>x.e>0.55).sort((a,b)=>b.e-a.e);
+  if(contributors.length){
+    if(contributors.length===1){
+      bits.push(`<b>${esc(contributors[0].n)}</b> is your strongest on <b>${esc(primary.tag)}</b> (${Math.round(contributors[0].e*100)}%) and they're in tonight`);
+    } else {
+      const top=contributors.slice(0,2).map(c=>esc(c.n)).join(" + ");
+      bits.push(`<b>${top}</b> give you real strength on <b>${esc(primary.tag)}</b> tonight`);
+    }
+  } else {
+    bits.push(`It's your best-projected round of the doublable set, even without a standout specialist present`);
+  }
+  // secondary tag nudge
+  if(best.weighted[1]){
+    const sec=best.weighted[1];
+    const secBest=present.map(n=>({n,e:(skill[n]&&skill[n][sec.tag])?skill[n][sec.tag].est:0.5})).sort((a,b)=>b.e-a.e)[0];
+    if(secBest && secBest.e>0.6) bits.push(`with a ${esc(sec.tag)} angle ${esc(secBest.n)} can cover`);
+  }
+  // margin over next best
+  const others=ranked.filter(x=>x.i!==best.i && x.proj!=null && x.tags.length);
+  if(others.length){
+    const next=others[0];
+    const margin=Math.round((best.proj-next.proj)*100);
+    if(margin>=8) bits.push(`it's clearly ahead of the next option (${esc(next.r.title||("round "+(next.i+1)))}) by ${margin} points of strength`);
+    else if(margin>=3) bits.push(`it edges out ${esc(next.r.title||("round "+(next.i+1)))} by ${margin} points`);
+    else bits.push(`though it's close with ${esc(next.r.title||("round "+(next.i+1)))} — either is defensible`);
+  }
+  // who's missing that would change it
+  const absentStars = state.players.filter(p=>!draft.present[p.name])
+    .map(p=>({n:p.name, e:(skill[p.name]&&skill[p.name][primary.tag])?skill[p.name][primary.tag].est:0}))
+    .filter(x=>x.e>0.7).sort((a,b)=>b.e-a.e);
+  let warn="";
+  if(absentStars.length) warn = `<p class="hint" style="margin:6px 0 0">Note: ${esc(absentStars[0].n)} (your top ${esc(primary.tag)} player) isn't in tonight — the projection already accounts for that.</p>`;
+
+  return `<div class="eng-why"><div class="eng-why-h">Why ${esc(best.r.title||("round "+(best.i+1)))}?</div>
+    <p>${bits.join("; ")}.</p>${warn}</div>`;
+}
+
 function renderEngine(present, skill){
   // project each doublable round from its typed title
   const rows = DOUBLE_ROWS.map(i=>{
     const r = draft.rounds[i];
     const det = scoreRound(r.title||"", present, skill);
-    return { i, r, tags:det.tags, proj: present.length? det.score : null, hasTitle:(r.title||"").trim().length>0 };
+    return { i, r, tags:det.tags, weighted:det.perTag||[], proj: present.length? det.score : null, hasTitle:(r.title||"").trim().length>0 };
   });
   // rank by projection (titled+detected first, desc); untitled sink to the bottom
   const ranked = [...rows].sort((a,b)=>{
@@ -866,9 +993,9 @@ function renderEngine(present, skill){
               <div class="eng-main">
                 <input class="eng-title" data-erf="${x.i}" placeholder="Round ${x.i+1} title…" value="${esc(x.r.title||"")}">
                 <div class="eng-tags">
-                  ${x.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}
+                  ${(x.weighted&&x.weighted.length?x.weighted:x.tags.map(t=>({tag:t,weight:1}))).map(w=>`<span class="chip${w.weight>=1?" chip-pri":w.weight>=0.6?" chip-sec":""}" title="${w.weight>=1?"primary":w.weight>=0.6?"secondary":"tertiary"} tag">${esc(w.tag||w)}</span>`).join("")}
                   ${x.hasTitle&&!x.tags.length?`<span class="chip warn" data-teach="${x.i}">⚠ teach the engine</span>`:""}
-                  ${x.proj!=null&&x.tags.length?`<span class="eng-proj">proj ${(x.proj).toFixed(2)} / ${x.r.avail}</span>`:""}
+                  ${x.proj!=null&&x.tags.length?`<span class="eng-proj">strength ${Math.round(x.proj*100)}%</span>`:""}
                   ${isBest?`<span class="eng-best">★ best bank</span>`:""}
                 </div>
               </div>
@@ -876,9 +1003,10 @@ function renderEngine(present, skill){
             </div>`;
           }).join("")}
         </div>
+        ${best&&present.length?doubleReasoning(best, ranked, present, skill)||"":""}
         <p class="hint">${current>=0?`Double banked on round ${current+1}${draft.rounds[current].title?` — ${esc(draft.rounds[current].title)}`:""}.`:`No double set yet.${best?` Suggested: round ${best.i+1}.`:""}`}</p>
         <div class="inline-actions" style="margin-top:14px">
-          <button class="btn primary" id="nw_next">Mark the night →</button>
+          <button class="btn primary" id="nw_next">Night details →</button>
           <button class="btn ghost" id="nw_discard">Discard</button>
         </div>
       </div>
@@ -928,12 +1056,46 @@ function draftTotals(){
   return { base, withDouble, dblRound };
 }
 
-/* ================= STEP 3 · MARKING ================= */
+/* ================= STEP 3 · NIGHT DETAILS (teams, start time, RIS) ================= */
+function renderNightDetails(present, skill){
+  const rivalNames = (state.rivals||[]).map(r=>r.name);
+  const body = `
+    <div class="panel"><div class="panel-head"><h3>Night details</h3>
+      <button class="btn sm ghost" id="nw_back">← Engine</button></div>
+      <div class="panel-body" style="padding:16px">
+        <p class="hint" style="margin-top:0">The quiz is introducing itself — log these as the host runs through the start, prizes and rules.</p>
+        <div class="field-row">
+          <div class="field"><label>Teams tonight</label><input type="number" id="nd_teams" min="1" value="${draft.numTeams??""}"></div>
+          <div class="field"><label>Quiz start time</label><input type="time" id="nd_start" value="${esc(draft.startTime||"")}"></div>
+        </div>
+        <div class="field"><label>Rusty Intonation Score (RIS) — 2nd-place prize intro, /10</label>
+          <input type="number" id="nd_ris" min="0" max="10" step="0.5" value="${draft.ris??""}" placeholder="0–10">
+          <p class="hint">Rate how the host introduced the 2nd-place prize, as the prizes are read out. Tracked per host.</p>
+        </div>
+        ${rivalNames.length?`<div class="field"><label>Rivals in tonight?</label>
+          <p class="hint" style="margin-top:0">Note who's here — you'll log their placement &amp; score at Results / via the Weekly Log. Your rivals: ${rivalNames.map(esc).join(", ")}.</p>
+        </div>`:`<p class="hint">No rivals set up yet — add regular teams on the Rivals tab to track grudges.</p>`}
+        <div class="inline-actions" style="margin-top:14px">
+          <button class="btn primary" id="nw_next">To marking →</button>
+          <button class="btn ghost" id="nw_discard">Discard</button>
+        </div>
+      </div>
+    </div>`;
+  nwShell(3, "", body);
+  $("#nw_back").onclick=()=>nwGoStep(2);
+  $("#nw_discard").onclick=nwDiscard;
+  $("#nw_next").onclick=()=>nwGoStep(4);
+  $("#nd_teams").oninput=e=>{ draft.numTeams=numOrNull(e.target.value); saveLocalDraft(); };
+  $("#nd_start").oninput=e=>{ draft.startTime=e.target.value; saveLocalDraft(); };
+  $("#nd_ris").oninput=e=>{ draft.ris=numOrNull(e.target.value); saveLocalDraft(); };
+}
+
+/* ================= STEP 4 · MARKING ================= */
 function renderMarking(present, skill){
   const t = draftTotals();
   const body = `
     <div class="panel"><div class="panel-head"><h3>Marking</h3>
-      <button class="btn sm ghost" id="nw_back">← Engine</button></div>
+      <button class="btn sm ghost" id="nw_back">← Details</button></div>
       <div class="panel-body" style="padding:8px 0" id="nw_mark">
         ${draft.rounds.map((r,i)=>markRow(r,i,present,skill)).join("")}
       </div>
@@ -943,15 +1105,15 @@ function renderMarking(present, skill){
         <span class="mt-val">${fmtScore(t.withDouble)}</span>
         ${t.dblRound>=0?`<span class="mt-note">incl. 2× on round ${t.dblRound+1}</span>`:`<span class="mt-note">no double set</span>`}</div>
       <div class="inline-actions">
-        <button class="btn primary" id="nw_next">Finish & rundown →</button>
+        <button class="btn primary" id="nw_next">Results →</button>
         <button class="btn ghost" id="nw_discard">Discard</button>
       </div>
     </div>`;
-  nwShell(3, "", body);
+  nwShell(4, "", body);
 
-  $("#nw_back").onclick=()=>nwGoStep(2);
+  $("#nw_back").onclick=()=>nwGoStep(3);
   $("#nw_discard").onclick=nwDiscard;
-  $("#nw_next").onclick=()=>nwGoStep(4);
+  $("#nw_next").onclick=()=>nwGoStep(5);
   wireMarking(present, skill);
 }
 
@@ -986,6 +1148,7 @@ function markRow(r,i,present,skill){
           : `<div class="mk-split"><label>Score<input type="number" min="0" max="10" step="0.5" data-sf="score" data-i="${i}" value="${r.score??""}" placeholder="0–10"></label></div>`}
         ${r.themePoint?`<label class="mk-theme"><input type="checkbox" data-stheme="${i}" ${r.themeLive?"checked":""}> theme point live (+1)${r.themeLive?` <input type="number" min="0" max="1" step="1" data-sf="themeScore" data-i="${i}" value="${r.themeScore??""}" placeholder="0–1" style="width:64px">`:""}</label>`:""}
       </div>
+      ${creditBlock(r,i,present)}
     </div>`;
   }
 
@@ -999,6 +1162,33 @@ function markRow(r,i,present,skill){
            <span class="hint" style="margin:0">bonus (often more than 1)</span>`
         : `<span class="hint" style="margin:0">of ${r.avail}${isDouble?` · counts double`:""}</span>`}
     </div>
+    ${creditBlock(r,i,present)}
+  </div>`;
+}
+
+/* Tap-to-credit: tap whoever carried the round (multiple allowed). One tap =
+   right:1, asked:1. The "exact" expander reveals right/asked per credited
+   person for rounds you want precise. Writes to draft.rounds[i].attribution,
+   which playerSkill() already reads to learn each player's subject strengths. */
+function creditBlock(r,i,present){
+  if(!present.length) return `<div class="mk-credit"><span class="hint" style="margin:0">Tick who's present in Setup to credit answers.</span></div>`;
+  const attr = r.attribution||{};
+  const credited = present.filter(n=>attr[n]);
+  const expanded = !!(r._creditOpen);
+  return `<div class="mk-credit" data-ci="${i}">
+    <div class="mk-credit-head">
+      <span class="mk-credit-label">Who carried it?</span>
+      ${credited.length?`<button class="mk-detail-toggle" data-credit-detail="${i}">${expanded?"hide counts":"exact counts"}</button>`:""}
+    </div>
+    <div class="mk-chips">
+      ${present.map(n=>`<button type="button" class="credit-chip${attr[n]?" on":""}" data-credit="${i}" data-name="${esc(n)}">${esc(n)}${attr[n]&&(attr[n].right!=null)?` <span class="cc-n">${attr[n].right}/${attr[n].asked??attr[n].right}</span>`:""}</button>`).join("")}
+    </div>
+    ${expanded&&credited.length?`<div class="mk-credit-exact">
+      ${credited.map(n=>{const a=attr[n]||{};return `<div class="cx-row"><span>${esc(n)}</span>
+        <input type="number" min="0" placeholder="right" data-cx-right="${i}" data-cx-name="${esc(n)}" value="${a.right??""}">
+        <input type="number" min="0" placeholder="asked" data-cx-asked="${i}" data-cx-name="${esc(n)}" value="${a.asked??""}"></div>`;}).join("")}
+      <p class="hint" style="margin:4px 0 0">Right out of asked. Feeds each person's subject strengths.</p>
+    </div>`:""}
   </div>`;
 }
 
@@ -1020,6 +1210,28 @@ function wireMarking(present, skill){
     if(!c.checked) draft.rounds[i].themeScore=null;
     saveLocalDraft(); renderNewWeek();
   });
+  // tap-to-credit: toggle a carrier (default right:1 asked:1); re-tap removes
+  $$("[data-credit]").forEach(b=> b.onclick=()=>{
+    const i=+b.dataset.credit, n=b.dataset.name;
+    const r=draft.rounds[i]; if(!r.attribution) r.attribution={};
+    if(r.attribution[n]){ delete r.attribution[n]; }
+    else { r.attribution[n]={right:1, asked:1}; }
+    saveLocalDraft(); renderNewWeek();
+  });
+  $$("[data-credit-detail]").forEach(b=> b.onclick=()=>{
+    const i=+b.dataset.creditDetail; draft.rounds[i]._creditOpen=!draft.rounds[i]._creditOpen;
+    saveLocalDraft(); renderNewWeek();
+  });
+  $$("[data-cx-right]").forEach(el=> el.oninput=()=>{
+    const i=+el.dataset.cxRight, n=el.dataset.cxName, r=draft.rounds[i];
+    if(!r.attribution) r.attribution={}; if(!r.attribution[n]) r.attribution[n]={};
+    r.attribution[n].right=numOrNull(el.value); saveLocalDraft();
+  });
+  $$("[data-cx-asked]").forEach(el=> el.oninput=()=>{
+    const i=+el.dataset.cxAsked, n=el.dataset.cxName, r=draft.rounds[i];
+    if(!r.attribution) r.attribution={}; if(!r.attribution[n]) r.attribution[n]={};
+    r.attribution[n].asked=numOrNull(el.value); saveLocalDraft();
+  });
 }
 function updateMarkTotal(){
   const t=draftTotals(); const el=$(".mt-val"); if(el) el.textContent=fmtScore(t.withDouble);
@@ -1031,7 +1243,7 @@ function renderRundown(present, skill){
   const t = draftTotals();
   const weWon = draft.placement!=null && +draft.placement===1;
   const body = `
-    <div class="panel"><div class="panel-head"><h3>Rundown</h3>
+    <div class="panel"><div class="panel-head"><h3>Results</h3>
       <button class="btn sm ghost" id="nw_back">← Marking</button></div>
       <div class="panel-body" style="padding:16px">
         <div class="run-summary">
@@ -1050,27 +1262,22 @@ function renderRundown(present, skill){
           </div>
         </div>
         <label class="rd-jackpot"><input type="checkbox" id="rd_jackWon" ${draft.jackpotWon?"checked":""}> Jackpot won by the winning team${draft.jackpot!=null?` (£${draft.jackpot})`:""}</label>
-        <p class="hint">If the jackpot wasn't won it rolls over to next week — leave this unticked.</p>
-        <div class="field" style="margin-top:6px"><label>Rusty Intonation Score (RIS) — 2nd-place prize intro, /10</label>
-          <input type="number" id="rd_ris" min="0" max="10" step="0.5" value="${draft.ris??""}" placeholder="0–10">
-          <p class="hint">Rusty's rating of how the host introduced the 2nd-place prize. Tracked per host.</p>
-        </div>
+        <p class="hint">If the jackpot wasn't won it rolls over to next week — leave this unticked.${draft.ris!=null?` · RIS logged: <b>${draft.ris}/10</b>.`:` · No RIS logged (add it in Night details).`}</p>
         <div class="inline-actions" style="margin-top:16px">
           <button class="btn primary" id="rd_save">Save week → stats</button>
           <button class="btn ghost" id="nw_discard">Discard</button>
         </div>
       </div>
     </div>`;
-  nwShell(4, "", body);
+  nwShell(5, "", body);
 
-  $("#nw_back").onclick=()=>nwGoStep(3);
+  $("#nw_back").onclick=()=>nwGoStep(4);
   $("#nw_discard").onclick=nwDiscard;
   $("#rd_place").oninput=e=>{ draft.placement=numOrNull(e.target.value); saveLocalDraft(); };
   $("#rd_win").oninput=e=>{ draft.winScore=numOrNull(e.target.value); saveLocalDraft(); };
   $("#rd_winner").oninput=e=>{ draft.winnerTeam=e.target.value; saveLocalDraft(); };
   $("#rd_weWon").onclick=()=>{ draft.winnerTeam=(state.teamName||"Us"); draft.placement=1; saveLocalDraft(); renderNewWeek(); };
   $("#rd_jackWon").onchange=e=>{ draft.jackpotWon=e.target.checked; saveLocalDraft(); };
-  $("#rd_ris").oninput=e=>{ draft.ris=numOrNull(e.target.value); saveLocalDraft(); };
   $("#rd_save").onclick=saveWeekStepped;
 }
 
@@ -1081,7 +1288,7 @@ function saveWeekStepped(){
   const score = t.withDouble || null;
   const week = { date:draft.date, quizmaster:draft.quizmaster||null,
     placement:draft.placement, numTeams:draft.numTeams, score, winScore:draft.winScore,
-    jackpot:draft.jackpot, teamSize:present.length||null,
+    jackpot:draft.jackpot, teamSize:present.length||null, startTime:draft.startTime||null,
     winnerTeam:draft.winnerTeam||null, jackpotWon:!!draft.jackpotWon, ris:draft.ris??null,
     attendance:Object.fromEntries(present.map(n=>[n,1])) };
   season().weeks.push(week);
@@ -1102,7 +1309,6 @@ function wireSetup(){
   $("#nw_date").onchange=e=>{draft.date=e.target.value;saveLocalDraft();};
   $("#nw_qm").oninput=e=>{draft.quizmaster=e.target.value;saveLocalDraft();};
   $("#nw_admin").oninput=e=>{draft.adminName=e.target.value;saveLocalDraft();};
-  $("#nw_teams").oninput=e=>{draft.numTeams=numOrNull(e.target.value);saveLocalDraft();};
   $("#nw_jack").oninput=e=>{draft.jackpot=numOrNull(e.target.value);saveLocalDraft();};
   $$("[data-pres]").forEach(c=> c.onchange=()=>{ draft.present[c.dataset.pres]=c.checked; saveLocalDraft(); renderNewWeek(); });
   $("#nw_addperson").onclick=()=>{
@@ -1228,22 +1434,40 @@ function saveWeek(){
 
 /* ================= TEACH-THE-ENGINE (add keyword) ================= */
 function openTeachModal(prefill, after){
+  let picked = [];  // tags in priority order
+  const drawTags = ()=>{
+    const chips = state.tags.map(t=>{
+      const rank = picked.indexOf(t);
+      const on = rank>=0;
+      const label = rank===0?"1·primary":rank===1?"2·secondary":rank===2?"3·tertiary":rank>=0?(rank+1)+"·":"";
+      return `<button type="button" class="tk-chip${on?" on":""}" data-tkpick="${esc(t)}">${esc(t)}${on?` <span class="tk-rank">${label}</span>`:""}</button>`;
+    }).join("");
+    const order = picked.length? `<p class="hint" style="margin:8px 0 0">Priority: ${picked.map((t,i)=>`<b>${esc(t)}</b>${i<picked.length-1?" › ":""}`).join("")}. The first tag drives the projection most; later tags nudge it.</p>` : `<p class="hint" style="margin:8px 0 0">Tap tags in order of importance — first tap is the primary subject.</p>`;
+    $("#tk_tags").innerHTML = chips;
+    $("#tk_order").innerHTML = order;
+    $$("[data-tkpick]").forEach(b=> b.onclick=()=>{
+      const t=b.dataset.tkpick; const i=picked.indexOf(t);
+      if(i>=0) picked.splice(i,1); else picked.push(t);
+      drawTags();
+    });
+  };
   openModal(`<div class="modal-head"><h3>Teach the engine</h3><button class="x" data-close>×</button></div>
     <div class="modal-body">
-      <p class="hint">Add a keyword so titles containing it get detected from now on. The keyword can be a word or phrase that appears in round titles.</p>
+      <p class="hint">Add a keyword so round titles containing it get detected. Then tap its subject tags <b>in priority order</b> — primary first.</p>
       <div class="field"><label>Keyword / phrase</label><input id="tk_word" value="${esc(prefill||"")}" placeholder="e.g. Eurovision"></div>
-      <div class="field"><label>Subject tag(s)</label>
-        <div class="att-grid">${state.tags.map(t=>`<label><input type="checkbox" data-tk="${esc(t)}">${esc(t)}</label>`).join("")}</div>
+      <div class="field"><label>Subject tags (tap in priority order)</label>
+        <div class="tk-tags" id="tk_tags"></div>
+        <div id="tk_order"></div>
       </div>
     </div>
     <div class="modal-foot"><button class="btn ghost" data-close>Cancel</button>
       <button class="btn primary" id="tk_save">Add keyword</button></div>`);
+  drawTags();
   $("#tk_save").onclick=()=>{
     const word=$("#tk_word").value.trim();
-    const tags=$$("[data-tk]").filter(c=>c.checked).map(c=>c.dataset.tk);
-    if(!word||!tags.length){ toast("Need a word and at least one tag"); return; }
-    state.keywords.push({k:word, t:tags, s:0});
-    save(); closeModal(); toast(`"${word}" added to engine`); after&&after(); render();
+    if(!word||!picked.length){ toast("Need a keyword and at least one tag"); return; }
+    state.keywords.push({k:word, t:picked.slice(), s:0});
+    save(); closeModal(); toast(`"${word}" added (primary: ${picked[0]})`); after&&after(); render();
   };
 }
 
@@ -1327,6 +1551,188 @@ function luckyCharm(sk){
 /* did this player appear (attend) in the given season at all? */
 function appearedIn(name, sk){ return weeksOf(sk).some(w=>w.attendance&&+w.attendance[name]===1); }
 
+/* ---- DOUBLE ENGINE ACCURACY ----
+   For each week with a double, was the doubled round actually the best % among
+   that week's doublable rounds? "Hit" if it tied for or beat the best. */
+function doubleAccuracy(sk){
+  const byDate={};
+  srcRounds(sk).forEach(r=>{ if(r.avail){ (byDate[r.date]=byDate[r.date]||[]).push(r); } });
+  let weeks=0, hits=0, gainSum=0, gainN=0;
+  Object.values(byDate).forEach(rs=>{
+    const dbl=rs.find(r=>r.double); if(!dbl||!dbl.avail) return;
+    weeks++;
+    const pct=r=>r.score!=null&&r.avail?(+r.score/+r.avail):null;
+    const dblPct=pct(dbl);
+    const others=rs.filter(r=>r!==dbl).map(pct).filter(x=>x!=null);
+    if(dblPct==null||!others.length) return;
+    const bestOther=Math.max(...others);
+    if(dblPct>=bestOther) hits++;
+    // points gained vs if we'd doubled the average round instead
+    const avgOther=others.reduce((a,x)=>a+x,0)/others.length;
+    gainSum += (dblPct-avgOther)*(+dbl.avail); gainN++;
+  });
+  return { weeks, hits, hitRate:weeks?hits/weeks:null, avgGain:gainN?gainSum/gainN:null };
+}
+
+/* ---- SCORE vs WINNING SCORE: gap to the best team over time ---- */
+function gapTrend(sk){
+  return srcWeeks(sk).filter(w=>w.score!=null&&w.winScore)
+    .map(w=>({date:w.date, gap:+w.winScore-+w.score, s2w:+w.score/+w.winScore, won:+w.placement===1}));
+}
+
+/* ---- JACKPOT: total rolled over + current unwon streak + on the table ---- */
+function jackpotStats(sk){
+  // Rollover is a within-season continuity stat: a streak shouldn't span the
+  // gap between seasons (e.g. last 2025 week -> first 2026 week). So we always
+  // use the *active* season's weeks here, regardless of the year toggle.
+  const W=weeksOf(sk).filter(w=>w.jackpot!=null).slice().sort((a,b)=>(a.date||"")<(b.date||"")?-1:1);
+  let rolledWeeks=0, curStreak=0, lastJackpot=null;
+  W.forEach(w=>{ lastJackpot=w.jackpot; if(w.jackpotWon){ curStreak=0; } else { rolledWeeks++; curStreak++; } });
+  return { rolledWeeks, curStreak, onTable:lastJackpot, n:W.length, season:(sk||state.activeSeason) };
+}
+
+/* ---- ROUND-TYPE CONSISTENCY: mean % and variability per type ---- */
+function typeConsistency(sk){
+  return state.roundTypes.map(t=>{
+    const rs=srcRounds(sk).filter(r=>r.type===t&&r.score!=null&&r.avail);
+    const ps=rs.map(r=>+r.score/+r.avail);
+    if(ps.length<2) return {name:t, n:ps.length, mean:ps.length?ps[0]:null, sd:null};
+    const mean=ps.reduce((a,x)=>a+x,0)/ps.length;
+    const sd=Math.sqrt(ps.reduce((a,x)=>a+(x-mean)**2,0)/ps.length);
+    return {name:t, n:ps.length, mean, sd};
+  }).filter(x=>x.n>0);
+}
+
+/* ---- SOUND THEME-POINT CONVERSION ---- */
+function themePointRate(sk){
+  // Sound rounds saved with avail 11 carried the live theme point; conversion =
+  // whether the extra point landed. We approximate from score>=base+1 on Music Intro.
+  const rs=srcRounds(sk).filter(r=>/music intro/i.test(r.type||"")&&r.avail&&+r.avail>=11&&r.score!=null);
+  if(!rs.length) return null;
+  const got=rs.filter(r=>+r.score>= ( +r.avail-9 )).length; // heuristic: scored into the theme-point band
+  return { n:rs.length, rate:got/rs.length };
+}
+
+/* ---- BEST PAIRINGS: which pairs of present players correlate with wins ---- */
+function bestPairings(sk){
+  const W=srcWeeks(sk).filter(w=>w.placement!=null&&w.attendance);
+  const names=state.players.map(p=>p.name);
+  const pairs=[];
+  for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++){
+    const a=names[i], b=names[j];
+    const both=W.filter(w=>+w.attendance[a]===1&&+w.attendance[b]===1);
+    if(both.length<2) continue;
+    const wins=both.filter(w=>+w.placement===1).length;
+    pairs.push({a, b, n:both.length, winRate:wins/both.length});
+  }
+  return pairs.sort((x,y)=> (y.winRate-x.winRate) || (y.n-x.n));
+}
+
+/* ---- RIVAL HEAT: closest contested rivals (smallest avg margin) ---- */
+function rivalHeat(sk){
+  return state.rivals.map(rv=>{
+    const rec=rivalRecord(rv.name, sk);
+    return { name:rv.name, n:rec.n, winRate:rec.winRate, avgMargin:rec.avgMargin,
+             heat: rec.avgMargin!=null? Math.abs(rec.avgMargin) : null };
+  }).filter(r=>r.n>0).sort((a,b)=> (a.heat??999)-(b.heat??999));
+}
+/* head-to-head trend vs a rival: are we pulling ahead or behind across the season? */
+function rivalTrend(name, sk){
+  const W=weeksOf(sk).filter(w=>w.rivals&&w.rivals[name]&&w.rivals[name].placement!=null&&w.placement!=null)
+    .slice().sort((a,b)=>(a.date||"")<(b.date||"")?-1:1);
+  const half=Math.floor(W.length/2);
+  const rate=arr=>arr.length?arr.filter(w=>+w.placement<+w.rivals[name].placement).length/arr.length:null;
+  if(W.length<4) return null;
+  return { early:rate(W.slice(0,half)), late:rate(W.slice(half)), n:W.length };
+}
+
+function renderInsights(){
+  const sk=state.activeSeason;
+  const has2025 = !!state.seasons['2025'] && sk!=='2025';
+  const combined = yearMode()==="combined";
+  const hasData = activeWeeks().length>0;
+  if(!hasData){ $("#view-insights").innerHTML = `<p class="eyebrow">${sk} · deeper stats</p><h2 class="section">Insights</h2><div class="empty">No weeks logged yet. Insights appear once you've played a few nights.</div>`; return; }
+
+  const da=doubleAccuracy();
+  const jk=jackpotStats();
+  const gaps=gapTrend();
+  const cons=typeConsistency().sort((a,b)=>(a.sd??9)-(b.sd??9));
+  const pairs=bestPairings().slice(0,6);
+  const heat=rivalHeat();
+  const tp=themePointRate();
+
+  // --- double accuracy block ---
+  let daHtml;
+  if(da.weeks){
+    daHtml = `<div class="stat-grid">`
+      + statCard("Double hit rate", da.hitRate!=null?Math.round(da.hitRate*100)+"%":"—", da.hits+" of "+da.weeks+" weeks", true)
+      + statCard("Weeks doubled", da.weeks)
+      + statCard("Avg pts gained", da.avgGain!=null?(da.avgGain>=0?"+":"")+da.avgGain.toFixed(1):"—", "vs an average round")
+      + `</div><p class="hint">"Hit" = the round you doubled scored the best (or joint-best) % of the doublable rounds that night. Points gained estimates how much the double earned versus banking it on a typical round.</p>`;
+  } else daHtml = `<p class="hint">No doubled weeks recorded yet.</p>`;
+
+  // --- gap to winners ---
+  let gapHtml;
+  if(gaps.length){
+    const recent=gaps.slice(-6);
+    const avgGap=gaps.reduce((a,g)=>a+g.gap,0)/gaps.length;
+    const trendArrow = recent.length>=4 ? (()=>{ const h=Math.floor(recent.length/2); const e=recent.slice(0,h).reduce((a,g)=>a+g.gap,0)/h; const l=recent.slice(h).reduce((a,g)=>a+g.gap,0)/(recent.length-h); return l<e?"closing ↓":l>e?"widening ↑":"steady"; })() : "—";
+    gapHtml = `<div class="stat-grid">`
+      + statCard("Avg gap to winner", avgGap.toFixed(1), "points behind 1st")
+      + statCard("Recent trend", trendArrow)
+      + statCard("Best night", Math.min(...gaps.map(g=>g.gap)).toFixed(1), "closest to winning")
+      + `</div>`;
+  } else gapHtml = `<p class="hint">Add winning scores on your weeks to see the gap to the best team.</p>`;
+
+  // --- jackpot ---
+  const jkHtml = jk.n
+    ? `<div class="stat-grid">`
+      + statCard("On the table", jk.onTable!=null?"£"+jk.onTable:"—", jk.curStreak?("unwon "+jk.curStreak+"w"):"fresh", true)
+      + statCard("Rollover weeks", jk.rolledWeeks, "of "+jk.n)
+      + statCard("Current streak", jk.curStreak, "weeks unwon")
+      + `</div>`
+    : `<p class="hint">No jackpot data yet.</p>`;
+
+  // --- consistency table ---
+  const consHtml = cons.length
+    ? `<table><thead><tr><th>Round type</th><th>Avg %</th><th>Swing</th><th>Rounds</th></tr></thead><tbody>`
+      + cons.map(c=>`<tr><td style="text-align:left;color:var(--chalk)">${esc(c.name)}</td><td>${c.mean!=null?Math.round(c.mean*100)+"%":"—"}</td><td>${c.sd!=null?"±"+Math.round(c.sd*100)+"%":"—"}</td><td>${c.n}</td></tr>`).join("")
+      + `</tbody></table><p class="hint">Lower swing = more reliable. High swing rounds are where nights are won or lost.</p>`
+    : `<p class="hint">Not enough rounds yet.</p>`;
+
+  // --- best pairings ---
+  const pairHtml = pairs.length
+    ? `<table><thead><tr><th>Pairing</th><th>Win % together</th><th>Nights</th></tr></thead><tbody>`
+      + pairs.map(p=>`<tr><td style="text-align:left;color:var(--chalk)">${esc(p.a)} + ${esc(p.b)}</td><td>${pct(p.winRate)}</td><td>${p.n}</td></tr>`).join("")
+      + `</tbody></table><p class="hint">Which duos are present when you win. Needs a few shared nights to mean anything.</p>`
+    : `<p class="hint">Not enough shared attendance yet to spot pairings.</p>`;
+
+  // --- rival heat ---
+  const heatHtml = heat.length
+    ? `<table><thead><tr><th>Rival</th><th>Win % vs</th><th>Avg margin</th><th>Closeness</th></tr></thead><tbody>`
+      + heat.map(r=>{ const tr=rivalTrend(r.name); const trLabel=tr?(tr.late>tr.early?"pulling ahead":tr.late<tr.early?"slipping":"level"):""; 
+        return `<tr><td style="text-align:left;color:var(--chalk)">${esc(r.name)}${trLabel?`<span class="hint" style="display:block;margin:0">${trLabel}</span>`:""}</td><td>${r.winRate==null?"—":pct(r.winRate)}</td><td>${r.avgMargin==null?"—":(r.avgMargin>0?"+":"")+r.avgMargin.toFixed(1)}</td><td>${r.heat==null?"—":r.heat.toFixed(1)+" pts"}</td></tr>`; }).join("")
+      + `</tbody></table><p class="hint">Sorted by closest contest — the top row is your real nemesis (smallest margin between you).</p>`
+    : `<p class="hint">Add rivals and log their weekly placements to see grudges heat up.</p>`;
+
+  $("#view-insights").innerHTML =
+    `<p class="eyebrow">${sk} · deeper stats</p>
+     <h2 class="section">Insights</h2>
+     <p class="section-note">Richer trackers built from your logged weeks${has2025?(combined?", using <b>2025 + "+sk+" combined</b>":", <b>"+sk+" only</b>"):""}. We can strip back to the ones you actually use.</p>
+     ${has2025?`<div class="inline-actions" style="margin-bottom:14px">
+       <button class="btn sm ${combined?"primary":"ghost"}" data-year="combined">2025 + ${sk}</button>
+       <button class="btn sm ${!combined?"primary":"ghost"}" data-year="current">${sk} only</button>
+     </div>`:""}
+     <div class="panel"><div class="panel-head"><h3>Double Engine accuracy</h3></div><div class="panel-body" style="padding:16px">${daHtml}</div></div>
+     <div class="panel"><div class="panel-head"><h3>Gap to the winners</h3></div><div class="panel-body" style="padding:16px">${gapHtml}</div></div>
+     <div class="panel"><div class="panel-head"><h3>Jackpot watch</h3><span class="mini-note">${sk} run</span></div><div class="panel-body" style="padding:16px">${jkHtml}</div></div>
+     ${tp?`<div class="panel"><div class="panel-head"><h3>Sound theme point</h3></div><div class="panel-body" style="padding:16px"><div class="stat-grid">${statCard("Theme point rate", Math.round(tp.rate*100)+"%", "of "+tp.n+" sound rounds")}</div></div></div>`:""}
+     <div class="panel"><div class="panel-head"><h3>Round-type consistency</h3></div><div class="panel-body" style="padding:16px">${consHtml}</div></div>
+     <div class="panel"><div class="panel-head"><h3>Best pairings</h3></div><div class="panel-body" style="padding:16px">${pairHtml}</div></div>
+     <div class="panel"><div class="panel-head"><h3>Rival heat</h3></div><div class="panel-body" style="padding:16px">${heatHtml}</div></div>`;
+  $$("[data-year]").forEach(b=> b.onclick=()=>{ sortState._yearMode=b.dataset.year; render(); });
+}
+
 function renderDashboard(){
   const t=teamStats(); const W=weeksOf().filter(w=>w.placement!=null);
   const last=W.slice(-5).map(w=>{const p=+w.placement;return p===1?'<span class="fg-W">W</span>':p<=3?'<span class="fg-P">P</span>':'<span class="fg-L">L</span>';}).join("");
@@ -1380,29 +1786,27 @@ function renderPlayers(){
     const ps=present.filter(w=>w.score!=null);
     const avgScore=ps.length?ps.reduce((a,w)=>a+ +w.score,0)/ps.length:0;
     const top=Object.entries(skill[p.name]||{}).map(([t,o])=>({t,e:o.est})).sort((a,b)=>b.e-a.e).slice(0,3);
-    const mvp=roundsOf().concat(roundsOf('2025')).filter(r=>r.mvps&&new RegExp("\\b"+escRe(p.name)+"\\b","i").test(r.mvps)).length;
-    return {name:p.name, attendance:att, present:present.length, winRate, avgScore, mvp, top, appeared:present.length>0};
+    return {name:p.name, attendance:att, present:present.length, winRate, avgScore, top, appeared:present.length>0};
   });
   // Hide players who haven't appeared this season yet (their 2025 skill still
   // loads under the hood and they auto-appear on first attendance). Only filter
   // once the season actually has weeks; before that, show everyone.
   const hiddenCount = seasonHasWeeks? allRows.filter(r=>!r.appeared).length : 0;
   const rows = (seasonHasWeeks && !showAll)? allRows.filter(r=>r.appeared) : allRows;
-  const key=sortState.players?.key||"mvp", dir=sortState.players?.dir||-1;
+  const key=sortState.players?.key||"winRate", dir=sortState.players?.dir||-1;
   rows.sort((a,b)=>(a[key]>b[key]?1:a[key]<b[key]?-1:0)*dir);
-  const head=[["name","Player"],["attendance","Attend."],["winRate","Win % (present)"],["avgScore","Avg Score"],["mvp","MVP"]];
+  const head=[["name","Player"],["attendance","Attend."],["winRate","Win % (present)"],["avgScore","Avg Score"]];
   $("#view-players").innerHTML=`
     <p class="eyebrow">Individual contribution &amp; skill</p>
     <h2 class="section">Players</h2>
-    <p class="section-note">Skill tags are the engine's view of each person's strengths, learned from attributed rounds (seeded from 2025). They drive the presence-adjusted Double Engine.${hiddenCount&&!showAll?` ${hiddenCount} regular${hiddenCount>1?"s":""} from 2025 hidden until they show up this season.`:""}</p>
+    <p class="section-note">Skill tags are the engine's view of each person's strengths, seeded from 2025 and updated live as you credit who carries each round in Marking. They drive the presence-adjusted Double Engine.${hiddenCount&&!showAll?` ${hiddenCount} regular${hiddenCount>1?"s":""} from 2025 hidden until they show up this season.`:""}</p>
     <div class="panel"><div class="panel-body"><table>
       <thead><tr>${head.map(([k,l])=>`<th data-sort="players" data-key="${k}">${l}${sortArrow("players",k)}</th>`).join("")}<th>Top subjects</th></tr></thead>
       <tbody>${rows.length?rows.map(r=>`<tr${r.appeared?"":' style="opacity:.55"'}>
         <td>${esc(r.name)}${!r.appeared?' <span class="chip">2025</span>':""}</td><td>${pct(r.attendance)} <span class="pct">${r.present}w</span></td>
         <td>${pct(r.winRate)}</td><td>${num(r.avgScore,1)}</td>
-        <td>${r.mvp?`<span class="chip pod">${r.mvp}</span>`:"0"}</td>
         <td style="text-align:left">${r.top.filter(x=>x.e>0.5).map(x=>`<span class="chip">${esc(x.t)} ${Math.round(x.e*100)}</span>`).join("")||'<span class="hint">learning…</span>'}</td>
-      </tr>`).join(""):`<tr><td colspan="6" class="empty">No one's attended a ${state.activeSeason} week yet.</td></tr>`}</tbody>
+      </tr>`).join(""):`<tr><td colspan="5" class="empty">No one's attended a ${state.activeSeason} week yet.</td></tr>`}</tbody>
     </table></div></div>
     <div class="inline-actions" style="margin-top:8px">
       ${hiddenCount||showAll?`<button class="btn sm ghost" id="togglePlayers">${showAll?"Hide 2025-only regulars":`Show all (incl. ${hiddenCount} from 2025)`}</button>`:""}
@@ -1415,22 +1819,28 @@ function renderPlayers(){
 
 /* ================= STRENGTHS ================= */
 function renderStrengths(){
-  const types=strengthByType().filter(s=>s.pct!=null).sort((a,b)=>b.pct-a.pct);
-  const tags=strengthByTag().filter(s=>s.pct!=null).sort((a,b)=>b.pct-a.pct);
+  const rs = activeRounds();
+  const types=strengthByType(rs).filter(s=>s.pct!=null).sort((a,b)=>b.pct-a.pct);
+  const tags=strengthByTag(rs).filter(s=>s.pct!=null).sort((a,b)=>b.pct-a.pct);
   const bar=s=>{const w=Math.round((s.pct||0)*100);const col=s.pct>=.7?"var(--good)":s.pct>=.55?"var(--accent2)":"var(--bad)";
     return `<tr><td>${esc(s.name)}</td><td class="bar-cell"><span class="bar" style="width:${w}px;background:${col}"></span><span class="pct">${pct(s.pct)}</span></td><td>${s.n}</td></tr>`;};
-  const note = weeksOf().length? "" : `<p class="section-note" style="color:var(--gold)">Showing ${state.activeSeason} (no rounds yet). The 2025 baseline view is below.</p>`;
+  const has2025 = !!state.seasons['2025'] && state.activeSeason!=='2025';
+  const combined = yearMode()==="combined";
   $("#view-strengths").innerHTML=`
     <p class="eyebrow">Where we win and where we bomb</p>
     <h2 class="section">Strengths &amp; Weaknesses</h2>
-    <p class="section-note">Points scored ÷ available, per category, this season. Recomputes live.</p>
-    ${note}
+    <p class="section-note">Points scored ÷ available, per category. ${has2025?(combined?"Showing <b>2025 + "+state.activeSeason+" combined</b> for a fuller picture.":"Showing <b>"+state.activeSeason+" only</b>."):"Recomputes live."}</p>
+    ${has2025?`<div class="inline-actions" style="margin-bottom:14px">
+      <button class="btn sm ${combined?"primary":"ghost"}" data-year="combined">2025 + ${state.activeSeason}</button>
+      <button class="btn sm ${!combined?"primary":"ghost"}" data-year="current">${state.activeSeason} only</button>
+    </div>`:""}
     <div class="two-col">
       <div class="panel"><div class="panel-head"><h3>By round type</h3></div><div class="panel-body"><table><thead><tr><th>Type</th><th>Performance</th><th>Rounds</th></tr></thead><tbody>${types.map(bar).join("")||'<tr><td colspan="3" class="empty">No data yet</td></tr>'}</tbody></table></div></div>
       <div class="panel"><div class="panel-head"><h3>By subject tag</h3></div><div class="panel-body"><table><thead><tr><th>Tag</th><th>Performance</th><th>Rounds</th></tr></thead><tbody>${tags.map(bar).join("")||'<tr><td colspan="3" class="empty">No data yet</td></tr>'}</tbody></table></div></div>
     </div>
     <p class="legend"><b>Green</b> ≥70% · <b>Blue</b> 55–70% · <b>Red</b> &lt;55%.</p>
   `;
+  $$("[data-year]").forEach(b=> b.onclick=()=>{ sortState._yearMode=b.dataset.year; render(); });
 }
 
 /* ================= DOUBLE ENGINE (standalone, presence-aware) ================= */
@@ -1509,14 +1919,63 @@ function renderRounds(){
   $("#view-rounds").innerHTML=`
     <p class="eyebrow">${state.activeSeason} · round detail</p>
     <h2 class="section">Round Data</h2>
+    <p class="section-note">${isAdmin?"Edit any round to fix a theme the engine drew a blank on — correcting the tags teaches the engine retrospectively.":"Round-by-round detail for the season."}</p>
     ${dates.length?dates.map(d=>`<div class="panel"><div class="panel-head"><h3>${d==="undated"?"Undated":fmtDate(d)}</h3><span class="mini-note">${byDate[d].length} ROUNDS</span></div>
-      <div class="panel-body"><table><thead><tr><th>#</th><th>Type</th><th>Theme</th><th>Tags</th><th>Score</th><th>Avail</th></tr></thead>
+      <div class="panel-body"><table><thead><tr><th>#</th><th>Type</th><th>Theme</th><th>Tags</th><th>Score</th><th>Avail</th>${isAdmin?"<th>Edit</th>":""}</tr></thead>
       <tbody>${byDate[d].map(r=>`<tr><td>${r.roundNum??""}</td><td>${esc(r.type||"")}${r.double?' <span class="chip double">2×</span>':''}</td>
         <td style="text-align:left;color:var(--ink)">${esc(r.theme||"—")}</td>
-        <td style="text-align:left">${(r.tags||"").split(",").map(t=>t.trim()).filter(Boolean).map(t=>`<span class="chip">${esc(t)}</span>`).join("")||"—"}</td>
-        <td>${r.score??"—"}</td><td>${r.avail??"—"}</td></tr>`).join("")}</tbody></table></div></div>`).join("")
+        <td style="text-align:left">${(r.tags||"").split(",").map(t=>t.trim()).filter(Boolean).map(t=>`<span class="chip">${esc(t)}</span>`).join("")||'<span class="hint">none</span>'}</td>
+        <td>${r.score??"—"}</td><td>${r.avail??"—"}</td>${isAdmin?`<td><button class="btn sm ghost" data-edit-round="${r._i}">Edit</button></td>`:""}</tr>`).join("")}</tbody></table></div></div>`).join("")
       :`<div class="empty">No rounds logged this season yet.</div>`}
   `;
+  if(isAdmin)$$("[data-edit-round]").forEach(b=>b.onclick=()=>openRoundModal(+b.dataset.editRound));
+}
+
+/* Retrospective round editor (Round Data tab). Full edit: theme, type, score,
+   avail, double, and a manual tag override. Fixing tags here re-teaches the
+   engine, since playerSkill() reads each round's tags. */
+function openRoundModal(idx){
+  const r=season().rounds[idx];
+  // current tags as a set; detection suggestion from the theme
+  let tags = new Set((r.tags||"").split(",").map(t=>t.trim()).filter(Boolean));
+  const drawTags=()=>{
+    const det=detectTags($("#r_theme")?($("#r_theme").value):(r.theme||""));
+    const suggested=det.tags.filter(t=>!tags.has(t));
+    $("#r_tags").innerHTML = state.tags.map(t=>`<button type="button" class="tk-chip${tags.has(t)?" on":""}" data-rtag="${esc(t)}">${esc(t)}</button>`).join("");
+    $("#r_suggest").innerHTML = suggested.length?`<p class="hint" style="margin:6px 0 0">Engine detects from this theme: ${suggested.map(t=>`<button type="button" class="mini-add" data-radd="${esc(t)}">+ ${esc(t)}</button>`).join(" ")}</p>`:(det.tags.length?`<p class="hint" style="margin:6px 0 0">Engine detection matches your tags.</p>`:`<p class="hint" style="margin:6px 0 0">Engine doesn't recognise this theme yet — set tags by hand, or <button type="button" class="mini-add" id="r_teach">teach a keyword</button>.</p>`);
+    $$("[data-rtag]").forEach(b=> b.onclick=()=>{ const t=b.dataset.rtag; tags.has(t)?tags.delete(t):tags.add(t); drawTags(); });
+    $$("[data-radd]").forEach(b=> b.onclick=()=>{ tags.add(b.dataset.radd); drawTags(); });
+    const teach=$("#r_teach"); if(teach) teach.onclick=()=>{ closeModal(); openTeachModal(($("#r_theme")?$("#r_theme").value:r.theme)||"", ()=>openRoundModal(idx)); };
+  };
+  openModal(`<div class="modal-head"><h3>Edit round</h3><button class="x" data-close>×</button></div>
+    <div class="modal-body">
+      <p class="hint" style="margin-top:0">${fmtDate(r.date)} · round ${r.roundNum??"?"}</p>
+      <div class="field-row"><div class="field"><label>Theme / title</label><input id="r_theme" value="${esc(r.theme||"")}" placeholder="what the round actually was"></div>
+      <div class="field"><label>Type</label><select id="r_type">${state.roundTypes.map(o=>`<option ${o===r.type?"selected":""}>${esc(o)}</option>`).join("")}</select></div></div>
+      <div class="field-row"><div class="field"><label>Score</label><input type="number" step="0.5" id="r_score" value="${r.score??""}"></div>
+      <div class="field"><label>Available</label><input type="number" step="0.5" id="r_avail" value="${r.avail??""}"></div></div>
+      <label class="rd-jackpot"><input type="checkbox" id="r_double" ${r.double?"checked":""}> Double (2×) was banked on this round</label>
+      <div class="field" style="margin-top:10px"><label>Subject tags (manual override)</label>
+        <div class="tk-tags" id="r_tags"></div>
+        <div id="r_suggest"></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn ghost" id="r_del" style="margin-right:auto;color:var(--bad)">Delete round</button>
+      <button class="btn ghost" data-close>Cancel</button><button class="btn primary" id="r_save">Save</button></div>`);
+  drawTags();
+  $("#r_theme").oninput=drawTags;
+  $("#r_save").onclick=()=>{
+    Object.assign(r,{
+      theme:$("#r_theme").value||"",
+      type:$("#r_type").value,
+      score:numOrNull($("#r_score").value),
+      avail:numOrNull($("#r_avail").value),
+      double:$("#r_double").checked,
+      tags:[...tags].join(", ")
+    });
+    save();closeModal();render();toast("Round updated · engine re-learned");
+  };
+  $("#r_del").onclick=()=>{ if(confirm("Delete this round record?")){ season().rounds.splice(idx,1); save();closeModal();render();toast("Round deleted"); } };
 }
 
 /* ================= RIVALS / GRUDGES ================= */
@@ -1771,9 +2230,15 @@ create policy "anon update" on quiz_state for update using (true);</textarea>
         <button class="btn ghost" id="imJson">Import JSON</button>
       </div>
     </div></div>
-    <div class="panel"><div class="panel-head"><h3>Keywords</h3></div><div class="panel-body" style="padding:16px">
-      <p class="section-note">${state.keywords.length.toLocaleString()} keywords power the Double Engine. Add one for a round that isn't being detected.</p>
-      <button class="btn gold sm" id="addKw">+ Add keyword</button>
+    <div class="panel"><div class="panel-head"><h3>Keywords</h3><span class="mini-note">${state.keywords.length} terms</span></div><div class="panel-body" style="padding:16px">
+      <p class="section-note">Keywords power the Double Engine. Each maps a word in a round title to ranked subject tags (primary drives the projection; secondary/tertiary nudge it). Add one for a round that isn't being detected.</p>
+      ${state.keywords.length?`<div class="kw-list">${state.keywords.slice().sort((a,b)=>String(a.k||"").localeCompare(String(b.k||""))).map(kw=>{
+        const gi = state.keywords.indexOf(kw);
+        return `<div class="kw-row"><span class="kw-word">${esc(kw.k||"—")}</span>
+          <span class="kw-tags">${(kw.t||[]).map((t,r)=>`<span class="chip${r===0?" chip-pri":r===1?" chip-sec":""}">${esc(t)}</span>`).join("")||'<span class="hint">no tags</span>'}</span>
+          <button class="btn sm ghost kw-del" data-kwdel="${gi}" title="Remove">✕</button></div>`;
+      }).join("")}</div>`:`<p class="hint">No keywords yet.</p>`}
+      <button class="btn gold sm" id="addKw" style="margin-top:10px">+ Add keyword</button>
     </div></div>
     <div class="panel danger"><div class="panel-head"><h3>Clear data</h3><span class="mini-note">${state.activeSeason}</span></div><div class="panel-body" style="padding:16px">
       <p class="section-note">${weeksOf().length} weeks and ${roundsOf().length} round records in ${state.activeSeason}. Use these when tidying up after test entries. Export a JSON backup first if unsure.</p>
@@ -1801,6 +2266,7 @@ create policy "anon update" on quiz_state for update using (true);</textarea>
   $("#clrRounds").onclick=()=>{ if(confirm(`Clear ALL ${roundsOf().length} round records in ${state.activeSeason}? Weeks stay; per-round detail is wiped.`)){ season().rounds=[]; save();render();toast("Round data cleared"); } };
   $("#clrSeason").onclick=()=>{ if(confirm(`Wipe ALL weeks AND rounds in ${state.activeSeason}? This cannot be undone.`)){ season().weeks=[]; season().rounds=[]; save();render();switchTab("dashboard");toast(`${state.activeSeason} cleared`); } };
   $("#addKw").onclick=()=>openTeachModal("",()=>render());
+  $$("[data-kwdel]").forEach(b=> b.onclick=()=>{ if(confirm("Remove this keyword?")){ state.keywords.splice(+b.dataset.kwdel,1); save(); render(); toast("Keyword removed"); } });
   if($("#forcePull")) $("#forcePull").onclick=()=>{ pullCloud(); toast("Pulling latest…"); };
   if($("#forcePush")) $("#forcePush").onclick=()=>{ pushCloud(true); toast("Pushing your copy…"); };
   if($("#copySql")) $("#copySql").onclick=()=>{ const t=$("#sqlSnippet"); t.select(); try{document.execCommand("copy");toast("SQL copied");}catch(e){toast("Select and copy manually");} };
@@ -1831,7 +2297,8 @@ function openWeekModal(idx){
       <div class="field-row"><div class="field"><label>Jackpot</label><input type="number" id="w_jack" value="${w.jackpot??""}"></div>
       <div class="field"><label>Winning team</label><input id="w_winner" placeholder="who won the quiz" value="${esc(w.winnerTeam||"")}"></div></div>
       <label class="rd-jackpot"><input type="checkbox" id="w_jackwon" ${w.jackpotWon?"checked":""}> Jackpot was won this week</label>
-      <div class="field" style="margin-top:10px"><label>RIS — 2nd-place prize intro /10</label><input type="number" min="0" max="10" step="0.5" id="w_ris" value="${w.ris??""}"></div>
+      <div class="field-row" style="margin-top:10px"><div class="field"><label>RIS — 2nd-place prize intro /10</label><input type="number" min="0" max="10" step="0.5" id="w_ris" value="${w.ris??""}"></div>
+      <div class="field"><label>Quiz start time</label><input type="time" id="w_start" value="${esc(w.startTime||"")}"></div></div>
       ${state.rivals.length?`<div class="field" style="margin-top:6px"><label>Rivals this week — their placement &amp; score</label>
         <div class="rival-entry">${state.rivals.map((rv,ri)=>{
           const cur=(w.rivals&&w.rivals[rv.name])||{};
@@ -1852,6 +2319,7 @@ function openWeekModal(idx){
       placement:numOrNull($("#w_place").value),numTeams:numOrNull($("#w_teams").value),
       score:numOrNull($("#w_score").value),winScore:numOrNull($("#w_win").value),jackpot:numOrNull($("#w_jack").value),
       winnerTeam:$("#w_winner").value||null,jackpotWon:$("#w_jackwon").checked,ris:numOrNull($("#w_ris").value),
+      startTime:$("#w_start").value||null,
       rivals:Object.keys(rivals).length?rivals:undefined});
     save();closeModal();render();toast("Week updated");};
   $("#w_del").onclick=()=>{if(confirm("Delete this week and its round data?")){
@@ -1877,9 +2345,9 @@ function exportXlsx(){
     const XLSX=window.XLSX;const wb=XLSX.utils.book_new();
     const sk=state.activeSeason;
     // Weekly Log
-    const wl=[["Date","Quizmaster","Placement","No. Teams","Score","Win Score","S2W","Jackpot","Jackpot Won","Winning Team","RIS","Team Size",...playerNames()]];
+    const wl=[["Date","Start","Quizmaster","Placement","No. Teams","Score","Win Score","S2W","Jackpot","Jackpot Won","Winning Team","RIS","Team Size",...playerNames()]];
     weeksOf().forEach(w=>{const s2w=(w.score!=null&&w.winScore)?w.score/w.winScore:"";
-      wl.push([w.date||"",w.quizmaster||"",w.placement??"",w.numTeams??"",w.score??"",w.winScore??"",s2w,w.jackpot??"",w.jackpotWon?"Yes":"",w.winnerTeam||"",w.ris??"",w.teamSize??"",
+      wl.push([w.date||"",w.startTime||"",w.quizmaster||"",w.placement??"",w.numTeams??"",w.score??"",w.winScore??"",s2w,w.jackpot??"",w.jackpotWon?"Yes":"",w.winnerTeam||"",w.ris??"",w.teamSize??"",
         ...playerNames().map(n=>(w.attendance&&+w.attendance[n]===1)?1:"")]);});
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(wl),"Weekly Log");
     // Round Data
