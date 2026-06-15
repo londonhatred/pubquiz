@@ -136,6 +136,9 @@
   .close-stat{display:flex;flex-direction:column;gap:4px}
   .close-num{font-family:var(--sans);font-weight:700;font-size:34px;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
   .close-meta{font-size:12.5px;color:var(--ink-dim)}
+  .live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--good);margin-right:5px;vertical-align:middle;animation:livePulse 1.8s ease-in-out infinite}
+  @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @media (prefers-reduced-motion:reduce){.live-dot{animation:none}}
   /* keyword admin list */
   .kw-list{display:flex;flex-direction:column;gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:4px}
   .kw-collapse{margin-bottom:4px}
@@ -336,8 +339,14 @@
     background:var(--panel2);border:1px solid var(--line);color:var(--ink-dim);border-radius:7px;
     padding:3px;cursor:pointer;font-family:inherit;transition:.12s;overflow:hidden;
     container-type:inline-size}
-  .bingo-cell span{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
-    font-size:clamp(7px,2.4vw,11px);line-height:1.12}
+  .bingo-cell span{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;
+    line-height:1.12;word-break:break-word;hyphens:auto}
+  /* adaptive text: short prompts big, long prompts shrink to fit the square */
+  .bingo-cell.sz-xl span{font-size:clamp(11px,3.4cqw,15px);font-weight:600;line-height:1.1}
+  .bingo-cell.sz-lg span{font-size:clamp(10px,3.0cqw,13px);font-weight:500}
+  .bingo-cell.sz-md span{font-size:clamp(8.5px,2.6cqw,11px)}
+  .bingo-cell.sz-sm span{font-size:clamp(7.5px,2.2cqw,9.5px);line-height:1.08}
+  .bingo-cell.sz-xs span{font-size:clamp(6.5px,1.9cqw,8.5px);line-height:1.05;-webkit-line-clamp:6}
   .bingo-cell:hover{border-color:var(--ink-faint)}
   .bingo-cell.marked{background:rgba(95,200,143,.18);border-color:var(--good);color:var(--good);font-weight:600}
   .bingo-cell.free{background:rgba(232,176,75,.12);border-color:rgba(232,176,75,.4);color:var(--gold);cursor:default}
@@ -514,14 +523,51 @@ const escRe = s => String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 /* starter host-trope squares (admin-editable under Bingo) — defined before
    load() because migrate() references it on first run with older saved data */
 const DEFAULT_TROPES = [
-  "Host mispronounces a name","Tech fails on the sound round","Someone argues an answer",
-  "\"Fingers on buzzers\" (no buzzers)","Host repeats the question twice","A team name is a pun",
-  "Wrong scores read out","Host plugs the next quiz","\"Silence please!\"","A dog in the pub",
-  "Picture round printed too dark","Host laughs at own joke","Someone shouts the answer",
-  "Round starts late","\"No conferring!\"","Half-point dispute","Music too loud to hear host",
-  "Host forgets whose round it is","\"Last orders\" mid-round","A phone goes off",
-  "Jackpot rolls over again","Host says \"easy one this\"","Team changes answer & was right first",
-  "Pen runs out","Marker can't read handwriting"
+  "\u201CI don\u2019t write the quiz.\u201D",
+  "69 (Nice)",
+  "6-7",
+  "Kay Gets Track Before It Kicks In",
+  "\u201C\u2026locked in, and so am I.\u201D",
+  "Dog In The Pub",
+  "360 Dad (Singular - Any Point)",
+  "Your Mum",
+  "Quiz Starts Later Than 19:40",
+  "Rusty Knows A Film",
+  "Amy Gets A Sound Round Question",
+  "Dana Doesn\u2019t Write In All Caps",
+  "Team Gets Sound Round Theme Within 3",
+  "No Trump In In The News",
+  "Host Says Same Question Number Twice",
+  "Quick Google During Question",
+  "\u201CYour favourite substitute\u201D",
+  "Amy Swaps Pen For Writing",
+  "Kay Adamant On An Answer (It\u2019s Wrong)",
+  "Member Of Team Says \u201CI TOLD YOU\u201D",
+  "Quiz Ends After Last Orders",
+  "Dana And Kay Both Get Song Immediately",
+  "Alex Forgets What Question We\u2019re On",
+  "SNL Reference (UK or US)",
+  "Anyone On The Team Is \u201CToo Competitive\u201D",
+  "Point Goes To A Vote",
+  "Half Point Given",
+  "Someone Argues With A Google AI Response",
+  "Bar Runs Out Of Margarita",
+  "No Paper In Creative",
+  "At Least One Team Is Reminded To Pay",
+  "First Red Pen We Take Doesn\u2019t Work",
+  "3 Or More Sound Round Questions Repeated",
+  "2 Or More Questions In Round Repeated",
+  "Debut Team Wins",
+  "Jackpot Won",
+  "Gila, Applause, Bar, or Dads Win",
+  "Team Larger Than 6",
+  "Solo Team",
+  "Team Drops Out Midway",
+  "Over 13 Teams In Quiz",
+  "Under 11 Teams In Quiz",
+  "Elizabeth Doesn\u2019t Know USA Related Answer",
+  "Sport Question",
+  "Round Name Is Nothing To Do With Round"
 ];
 let state = load();
 let isAdmin = (()=>{ try{ return localStorage.getItem("fng_admin")==="1"; }catch(e){ return false; } })();
@@ -541,6 +587,15 @@ function withDefaults(s){
   if(!Array.isArray(s.bingo.tropes)) s.bingo.tropes = DEFAULT_TROPES.slice();
   if(!s.bingo.round) s.bingo.round = 1;
   if(!s.bingo.players || typeof s.bingo.players!=="object") s.bingo.players = {};
+  // one-time trope refresh: if the saved list is still the original starter set
+  // (untouched), upgrade it to the current DEFAULT_TROPES. A version marker means
+  // this runs once and never overwrites a list the admin has customised.
+  const OLD_FIRST = "Host mispronounces a name";
+  if(s.bingo.tropesV !== 2){
+    const untouched = Array.isArray(s.bingo.tropes) && s.bingo.tropes[0]===OLD_FIRST;
+    if(untouched || !s.bingo.tropes.length){ s.bingo.tropes = DEFAULT_TROPES.slice(); }
+    s.bingo.tropesV = 2;
+  }
   // backfill: weeks (esp. 2025 seed) with a jackpot but no jackpotWon flag read
   // as "rolled over" rather than blank. Editable per-week in the Weekly Log.
   Object.values(s.seasons||{}).forEach(se=>{
@@ -2209,14 +2264,14 @@ function renderBingo(){
       ${haveName&&enough?`
         <div class="bingo-card-wrap">
           <div class="bingo-grid">
-            ${cells.map((c,i)=>`<button class="bingo-cell${c.free?" free":""}${marks.has(i)?" marked":""}" data-bi="${i}" ${c.free?"disabled":""}><span>${esc(c.text)}</span></button>`).join("")}
+            ${cells.map((c,i)=>{const len=(c.text||"").length;const sz=c.free?"":(len<=10?" sz-xl":len<=18?" sz-lg":len<=30?" sz-md":len<=46?" sz-sm":" sz-xs");return `<button class="bingo-cell${c.free?" free":""}${marks.has(i)?" marked":""}${sz}" data-bi="${i}" ${c.free?"disabled":""}><span>${esc(c.text)}</span></button>`;}).join("")}
           </div>
         </div>
         <p class="hint" id="bingo_status">${bingoLines(marks)?"🎉 BINGO! Shout it.":`Your best line ${closenessLabel(myNeed)}.`}</p>
       `:`<p class="hint">Enter your name and tap <b>Get my card</b>.</p>`}
     </div></div>
 
-    <div class="panel"><div class="panel-head"><h3>Who's playing</h3><span class="mini-note">ROUND ${round}</span></div>
+    <div class="panel"><div class="panel-head"><h3>Who's playing</h3><span class="mini-note">${synced?'<span class="live-dot"></span>LIVE · ':""}ROUND ${round}</span></div>
       <div class="panel-body" style="padding:16px">
         ${roster.length?`<div class="bingo-board">
           ${roster.map(r=>`<div class="bb-row${r.name===bingoName?" me":""}${r.won?" won":r.need<=1?" close":""}">
@@ -2250,6 +2305,8 @@ function renderBingo(){
     set.add(12);
     e.marks=[...set]; e.ts=Date.now();
     save();  // persists locally + pushes to shared store
+    // treat our own just-saved state as current so the live poll doesn't briefly revert it
+    try{ window.__bingoSig = JSON.stringify({p:state.bingo.players||{}, r:state.bingo.round, t:state.bingo.tropes}); }catch(_){}
     renderBingo();
   });
   if(isAdmin){
@@ -2490,6 +2547,39 @@ if(SYNC_ON){
   pullCloud();                              // initial fetch from shared store
   setInterval(()=>{ if(!isAdmin || !draft) pullCloud(); }, 60000);  // gentle background refresh
   window.addEventListener("focus", ()=>{ if(!isAdmin || !draft) pullCloud(); });
+
+  /* Fast live refresh for the Bingo board: every few seconds, pull the shared
+     bingo state and re-render ONLY the bingo view (not the whole page), so
+     other players' progress appears in near-real-time. Carefully guarded so it
+     never interrupts typing or fights with an open modal. */
+  let _bingoSigRef = window;  // hold sig on window to share with the tap handler
+  async function pullBingoLive(){
+    if(!SYNC_ON) return;
+    // only bother while the Bingo tab is actually visible
+    const bingoView = $("#view-bingo");
+    if(!bingoView || !bingoView.classList.contains("active")) return;
+    // don't disrupt an admin mid-entry, a focused text field, or an open modal
+    const ae = document.activeElement;
+    const typing = ae && (ae.tagName==="INPUT" || ae.tagName==="TEXTAREA" || ae.tagName==="SELECT");
+    if(typing) return;
+    if(document.querySelector(".modal-bg")) return;
+    try{
+      const r = await fetch(sbUrl()+"?id=eq."+encodeURIComponent(SYNC_ROW_ID)+"&select=data", {headers:sbHeaders()});
+      if(!r.ok) return;
+      const rows = await r.json();
+      if(!rows.length || !rows[0].data) return;
+      const cloud = rows[0].data;
+      const cloudBingo = cloud.bingo || {};
+      const sig = JSON.stringify({p:cloudBingo.players||{}, r:cloudBingo.round, t:cloudBingo.tropes});
+      if(sig === window.__bingoSig) return;    // nothing changed — skip the re-render
+      window.__bingoSig = sig;
+      // merge just the bingo slice into local state, then re-render only bingo
+      if(cloud.bingo) state.bingo = cloud.bingo;
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+      renderBingo();
+    }catch(e){ /* silent — the 60s full pull will surface real outages */ }
+  }
+  setInterval(pullBingoLive, 4000);
 }
 
 render();
